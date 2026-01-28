@@ -1,4 +1,3 @@
-// --- app/page.tsx --- FIXED VERSION
 
 "use client"
 
@@ -1026,19 +1025,19 @@ export default function DashboardPage() {
         <div className="max-w-[2000px] mx-auto px-4 sm:px-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 text-xs text-muted-foreground">
             <div>
-              <p>©2025 Invariant Ego, LLC. All Rights Reserved.</p>
+          <a href="/company.html" className="hover:text-cyan-500">2025© Invariant Ego, LLC.</a>
             </div>
             <div className="flex items-center gap-3">
-             <a href="/company.html" className="hover:text-foreground transition-colors">
+             <a href="/company.html" className="hover:text-cyan-600 transition-colors">
                Company
             </a>
-              <a href="/PrivacyPolicy.html" className="hover:text-foreground transition-colors">
+              <a href="/PrivacyPolicy.html" className="hover:text-emerald-600 transition-colors">
                 Privacy
               </a>
-               <a href="/MITlicense.html" className="hover:text-foreground transition-colors">
+               <a href="/MITlicense.html" className="hover:text-emerald-600 transition-colors">
                 License
               </a>
-              <a href="mailto:support@callaback.com" className="hover:text-foreground transition-colors">
+              <a href="mailto:support@callaback.com" className="hover:text-emerald-600 transition-colors">
                 Support
               </a>
             </div>

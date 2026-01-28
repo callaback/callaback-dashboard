@@ -1,7 +1,8 @@
 // --- app/login/page.tsx ---
+
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Phone, User, Mail, Lock, Eye, EyeOff, LogIn } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -20,28 +21,67 @@ export default function LoginPage() {
   const [name, setName] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true)
   
   const supabase = createClient()
   const router = useRouter()
+
+  // Check if user is already logged in - FIXED VERSION
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession()
+        
+        if (error) {
+          console.error("Session check error:", error)
+        }
+        
+        // If there's a valid session, redirect to dashboard
+        if (session?.user) {
+          console.log("User already logged in, redirecting to dashboard")
+          router.replace('/') // Use replace instead of push to prevent back button issues
+          return
+        }
+        
+        console.log("No active session, showing login page")
+      } catch (error) {
+        console.error("Error checking session:", error)
+      } finally {
+        setIsCheckingAuth(false)
+      }
+    }
+
+    checkSession()
+  }, [router, supabase])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     
     try {
+      console.log("Attempting login...")
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
 
-      if (error) throw error
+      if (error) {
+        console.error("Login error:", error)
+        throw error
+      }
       
       if (data.user) {
+        console.log("Login successful for:", data.user.email)
         toast.success("Logged in successfully")
-        router.push("/")
-        router.refresh()
+        
+        // Wait a moment for the session to be fully established
+        await new Promise(resolve => setTimeout(resolve, 500))
+        
+        // Use replace to prevent back button from returning to login
+        router.replace("/")
       }
     } catch (error: any) {
+      console.error("Login failed:", error)
       toast.error(error.message || "Login failed")
     } finally {
       setLoading(false)
@@ -53,6 +93,7 @@ export default function LoginPage() {
     setLoading(true)
     
     try {
+      console.log("Attempting signup...")
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -62,16 +103,28 @@ export default function LoginPage() {
         }
       })
 
-      if (error) throw error
+      if (error) {
+        console.error("Signup error:", error)
+        throw error
+      }
       
       if (data.user) {
-        toast.success("Account created! Check your email for confirmation.")
+        console.log("Signup successful:", data.user.email)
+        
+        // Check if email confirmation is required
+        if (data.user.identities && data.user.identities.length === 0) {
+          toast.info("Please check your email to confirm your account before logging in.")
+        } else {
+          toast.success("Account created! You can now log in.")
+        }
+        
+        // Switch to login tab
         setAuthMode("login")
-        setEmail("")
-        setPassword("")
+        setPassword("") // Clear password but keep email
         setName("")
       }
     } catch (error: any) {
+      console.error("Signup failed:", error)
       toast.error(error.message || "Sign up failed")
     } finally {
       setLoading(false)
@@ -94,6 +147,18 @@ export default function LoginPage() {
     } catch (error: any) {
       toast.error(error.message)
     }
+  }
+
+  // Show loading state while checking auth
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50">
+        <div className="text-center space-y-4">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-cyan-600 border-t-transparent mx-auto" />
+          <p className="text-muted-foreground font-medium">callaback node startup...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -119,7 +184,7 @@ export default function LoginPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="login" className="w-full" onValueChange={(v: any) => setAuthMode(v)}>
+          <Tabs defaultValue="login" className="w-full" value={authMode} onValueChange={(v: any) => setAuthMode(v)}>
             <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger value="login">Login</TabsTrigger>
               <TabsTrigger value="signup">Sign Up</TabsTrigger>
@@ -139,6 +204,7 @@ export default function LoginPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     className="h-11"
+                    autoComplete="email"
                   />
                 </div>
                 <div className="space-y-2">
@@ -154,6 +220,7 @@ export default function LoginPage() {
                       onChange={(e) => setPassword(e.target.value)}
                       required
                       className="h-11 pr-10"
+                      autoComplete="current-password"
                     />
                     <button
                       type="button"
@@ -201,6 +268,7 @@ export default function LoginPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="h-11"
+                    autoComplete="name"
                   />
                 </div>
                 <div className="space-y-2">
@@ -215,6 +283,7 @@ export default function LoginPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     className="h-11"
+                    autoComplete="email"
                   />
                 </div>
                 <div className="space-y-2">
@@ -231,6 +300,7 @@ export default function LoginPage() {
                       required
                       className="h-11 pr-10"
                       minLength={6}
+                      autoComplete="new-password"
                     />
                     <button
                       type="button"
