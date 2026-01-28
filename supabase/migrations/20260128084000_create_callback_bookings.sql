@@ -8,3 +8,7 @@ CREATE TABLE callback_bookings (
 );
 
 CREATE INDEX idx_callback_bookings_date ON callback_bookings(date);
+
+-- Enable realtime
+ALTER PUBLICATION supabase_realtime ADD TABLE callback_bookings;
+
