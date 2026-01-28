@@ -134,16 +134,15 @@ export function CallbackCalendar() {
   const monthName = currentDate.toLocaleString("default", { month: "long", year: "numeric" })
 
   return (
-    <Card className="h-full flex flex-col">
-      <CardHeader className="pb-3">
+    <Card className="h-full flex flex-col overflow-hidden">
+      <CardHeader className="pb-3 flex-shrink-0">
         <CardTitle className="text-sm flex items-center gap-2">
           <Phone className="h-4 w-4 text-primary" />
           Callback Bookings
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 flex flex-col gap-3 overflow-hidden">
-        <ScrollArea className="flex-1">
-          <div className="pr-4 space-y-3">
+      <CardContent className="flex-1 overflow-y-auto p-4">
+        <div className="space-y-3">
             {/* Calendar */}
             <div className="border rounded-lg p-3 bg-slate-50 dark:bg-slate-800 dark:border-slate-700">
               {/* Month Navigation */}
@@ -295,8 +294,7 @@ export function CallbackCalendar() {
                 )}
               </div>
             </div>
-          </div>
-        </ScrollArea>
+        </div>
       </CardContent>
     </Card>
   )
