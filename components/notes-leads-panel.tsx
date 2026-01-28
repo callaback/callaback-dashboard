@@ -529,7 +529,6 @@ export function NotesLeadsPanel() {
               </Button>
             </div>
           </div>
-        }
 
         {/* Leads List */}
         <ScrollArea className="h-[calc(100%-1rem)]">
