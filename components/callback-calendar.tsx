@@ -80,7 +80,7 @@ export function CallbackCalendar() {
 
     setIsLoading(true)
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("callback_bookings")
         .insert({
           date: selectedDate,
@@ -88,17 +88,21 @@ export function CallbackCalendar() {
           phone: phoneNumber,
           created_at: new Date().toISOString()
         })
+        .select()
 
-      if (error) throw error
+      if (error) {
+        console.error("Supabase error:", error)
+        throw error
+      }
 
       toast.success(`Callback booked for ${selectedDate} at ${selectedTime}`)
       setPhoneNumber("")
       setSelectedDate(null)
       setSelectedTime(null)
-      loadBookings()
+      await loadBookings()
     } catch (error) {
       console.error("Error booking callback:", error)
-      toast.error("Failed to book callback")
+      toast.error(`Failed to book callback: ${error instanceof Error ? error.message : "Unknown error"}`)
     } finally {
       setIsLoading(false)
     }
