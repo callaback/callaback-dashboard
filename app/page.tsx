@@ -652,18 +652,6 @@ export default function DashboardPage() {
 
       {/* Main Content */}
       <main className="max-w-[2000px] mx-auto p-4 pb-8 w-full">
-        {/* Search Bar */}
-        <div className="mb-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search calls, leads, contacts, messages..."
-              className="pl-9 w-full"
-              onChange={(e) => handleSearch(e.target.value)}
-            />
-          </div>
-        </div>
-
         {/* Time Range Selector */}
         <div className="mb-4">
           <Tabs value={timeRange} onValueChange={setTimeRange} className="w-full">
