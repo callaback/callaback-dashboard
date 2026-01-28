@@ -32,9 +32,9 @@ export function NotesLeadsPanel() {
       const now = new Date().toLocaleTimeString()
       localStorage.setItem("notes_last_saved", now)
       setLastSaved(now)
+      setTimeout(() => setIsSaving(false), 500)
     } catch (error) {
       console.error("Failed to save notes:", error)
-    } finally {
       setIsSaving(false)
     }
   }
@@ -103,9 +103,10 @@ export function NotesLeadsPanel() {
             onClick={saveNotes}
             disabled={isSaving}
             className="gap-2"
+            variant={isSaving ? "default" : "outline"}
           >
             <Save className="h-4 w-4" />
-            Save
+            {isSaving ? "Saving..." : "Save"}
           </Button>
 
           <Button
