@@ -956,68 +956,6 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
-
-        {/* Recent Activity - Compact */}
-        <Card className="mt-4">
-          <CardHeader className="pb-2 px-4 pt-4">
-            <CardTitle className="text-sm">Recent Activity</CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 pt-0">
-            <ScrollArea className="h-[120px]">
-              <div className="space-y-2">
-                {filteredInteractions.slice(0, 3).map((interaction) => (
-                  <div
-                    key={interaction.id}
-                    className="flex items-center justify-between p-2 rounded-lg border hover:bg-secondary/30 transition-colors"
-                  >
-                    <div className="flex items-center gap-2 flex-1 min-w-0">
-                      <div className={cn(
-                        "h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0",
-                        interaction.type === "call"
-                          ? "bg-blue-100 text-blue-600"
-                          : interaction.type === "sms"
-                          ? "bg-green-100 text-green-600"
-                          : "bg-purple-100 text-purple-600"
-                      )}>
-                        {interaction.type === "call" ? (
-                          interaction.direction === "inbound" ? (
-                            <PhoneIncoming className="h-3 w-3" />
-                          ) : (
-                            <PhoneOutgoing className="h-3 w-3" />
-                          )
-                        ) : interaction.type === "sms" ? (
-                          <MessageSquare className="h-3 w-3" />
-                        ) : (
-                          <Voicemail className="h-3 w-3" />
-                        )}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs font-medium truncate">
-                          {interaction.contacts?.name || formatPhoneNumber(interaction.from_number)}
-                        </p>
-                        <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                          <span className="capitalize">{interaction.type}</span>
-                          <span>•</span>
-                          <span>{formatTimeAgo(interaction.created_at)}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1 flex-shrink-0">
-                      {interaction.is_missed_call && (
-                        <Badge variant="outline" className="text-[8px] px-1 py-0 bg-red-100 text-red-800">
-                          Missed
-                        </Badge>
-                      )}
-                      <Badge variant="outline" className="text-[8px] px-1 py-0">
-                        {interaction.status}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
-          </CardContent>
-        </Card>
       </main>
     </div>
   )
