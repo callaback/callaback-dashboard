@@ -542,15 +542,14 @@ export default function DashboardPage() {
       setContacts([])
       setMetrics([])
       
-      // The onAuthStateChange listener will handle the redirect
-      // But we can also explicitly redirect as a fallback
-      setTimeout(() => {
-        router.push('/login')
-      }, 100)
+      // Redirect to login
+      router.push('/login')
       
     } catch (error) {
       console.error("Logout exception:", error)
       toast.error("An error occurred during logout")
+      // Force redirect anyway
+      router.push('/login')
     }
   }
 
