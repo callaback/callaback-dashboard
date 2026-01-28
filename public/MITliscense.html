@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIT License | Invariant Ego, LLC</title>
+    <style>
+        /* Import your theme variables */
+        :root {
+            /* Light theme colors from your CSS */
+            --background: oklch(0.98 0.005 240);
+            --foreground: oklch(0.15 0.015 260);
+            --card: oklch(1 0 0);
+            --card-foreground: oklch(0.15 0.015 260);
+            --primary: oklch(0.55 0.22 200);
+            --primary-foreground: oklch(0.98 0 0);
+            --secondary: oklch(0.92 0.01 240);
+            --secondary-foreground: oklch(0.15 0.015 260);
+            --muted: oklch(0.94 0.008 240);
+            --muted-foreground: oklch(0.48 0.01 260);
+            --accent: oklch(0.88 0.015 240);
+            --accent-foreground: oklch(0.15 0.015 260);
+            --destructive: oklch(0.58 0.24 25);
+            --border: oklch(0.88 0.01 240);
+            --input: oklch(0.92 0.008 240);
+            --ring: oklch(0.55 0.22 200);
+            --radius: 0.75rem;
+            
+            /* Gradients */
+            --gradient-subtle: linear-gradient(135deg, oklch(0.99 0.005 240) 0%, oklch(0.97 0.008 220) 100%);
+            --gradient-card: linear-gradient(to bottom, oklch(1 0 0) 0%, oklch(0.995 0.002 240) 100%);
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+        }
+
+        .dark {
+            /* Dark theme colors from your CSS */
+            --background: oklch(0.11 0.015 260);
+            --foreground: oklch(0.96 0.005 240);
+            --card: oklch(0.15 0.018 260);
+            --card-foreground: oklch(0.96 0.005 240);
+            --primary: oklch(0.65 0.22 200);
+            --primary-foreground: oklch(0.11 0.015 260);
+            --secondary: oklch(0.2 0.02 260);
+            --secondary-foreground: oklch(0.92 0.005 240);
+            --muted: oklch(0.18 0.018 260);
+            --muted-foreground: oklch(0.62 0.008 240);
+            --accent: oklch(0.22 0.02 260);
+            --destructive: oklch(0.58 0.24 25);
+            --border: oklch(0.25 0.02 260);
+            --input: oklch(0.2 0.02 260);
+            --ring: oklch(0.65 0.22 200);
+            
+            /* Dark gradients */
+            --gradient-subtle: linear-gradient(135deg, oklch(0.12 0.016 260) 0%, oklch(0.14 0.018 250) 100%);
+            --gradient-card: linear-gradient(to bottom, oklch(0.15 0.018 260) 0%, oklch(0.14 0.017 260) 100%);
+            
+            /* Dark shadows */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.6), 0 8px 10px -6px rgb(0 0 0 / 0.4);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: var(--foreground);
+            background: var(--gradient-subtle);
+            min-height: 100vh;
+            padding: 0;
+            font-feature-settings: 'rlig' 1, 'calt' 1, 'ss01' 1;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            position: relative;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--foreground);
+            background: linear-gradient(135deg, var(--primary), oklch(0.6 0.2 145));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .last-updated {
+            color: var(--muted-foreground);
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            margin-top: 0.5rem;
+        }
+        
+        .content {
+            background: var(--gradient-card);
+            backdrop-filter: blur(10px);
+            border-radius: calc(var(--radius) * 1.5);
+            padding: 2.5rem;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-xl);
+            transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
+        
+        .content:hover {
+            box-shadow: var(--shadow-xl);
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin: 2.5rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary);
+            color: var(--foreground);
+            position: relative;
+        }
+        
+        h2:first-of-type {
+            margin-top: 0;
+        }
+        
+        h3 {
+            font-size: 1.3rem;
+            margin: 1.5rem 0 0.75rem;
+            color: var(--primary);
+        }
+        
+        p {
+            margin-bottom: 1.2rem;
+            color: var(--muted-foreground);
+        }
+        
+        ul, ol {
+            margin: 1rem 0 1.5rem 1.5rem;
+            color: var(--muted-foreground);
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        strong {
+            color: var(--foreground);
+            font-weight: 600;
+        }
+        
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-bottom: 1px dotted transparent;
+            padding-bottom: 1px;
+        }
+        
+        a:hover {
+            color: var(--primary);
+            border-bottom: 1px dotted var(--primary);
+        }
+        
+        .highlight-box {
+            background-color: color-mix(in oklch, var(--primary) 5%, transparent);
+            border-left: 4px solid var(--primary);
+            padding: 1.2rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+            border-color: var(--primary);
+        }
+        
+        .license-text {
+            background-color: color-mix(in oklch, var(--primary) 8%, transparent);
+            border-radius: var(--radius);
+            padding: 1.8rem;
+            margin: 2rem 0;
+            border: 1px solid color-mix(in oklch, var(--primary) 20%, transparent);
+            font-family: 'Courier New', 'SF Mono', Monaco, monospace;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .permissions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.2rem;
+            margin: 2rem 0;
+        }
+        
+        .permission-item {
+            background-color: color-mix(in oklch, var(--primary) 4%, transparent);
+            border-radius: var(--radius);
+            padding: 1.2rem;
+            border: 1px solid color-mix(in oklch, var(--primary) 15%, transparent);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .permission-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .permission-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        
+        .permission-desc {
+            font-size: 0.9rem;
+            color: var(--muted-foreground);
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            color: var(--muted-foreground);
+            font-size: 0.9rem;
+        }
+        
+        .primary-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            margin: 0 8px;
+            vertical-align: middle;
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Better selection colors */
+        ::selection {
+            background-color: color-mix(in oklch, var(--primary) 20%, transparent);
+            color: inherit;
+        }
+        
+        /* Enhanced focus styles for accessibility */
+        :focus-visible {
+            outline: 2px solid var(--ring);
+            outline-offset: 2px;
+            border-radius: 2px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem 1rem;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .content {
+                padding: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .permissions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .content {
+                padding: 1.2rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            .license-text {
+                padding: 1.2rem;
+                font-size: 0.85rem;
+            }
+        }
+        
+        /* Professional animations */
+        @keyframes fade-in-up {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .animate-fade-in-up {
+            animation: fade-in-up 0.4s ease-out;
+        }
+        
+        .animate-fade-in {
+            animation: fade-in 0.3s ease-out;
+        }
+        
+        /* Decorative elements with theme colors */
+        .decorative-corner {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, color-mix(in oklch, var(--background) 70%, transparent) 0%, transparent 70%);
+            z-index: -1;
+        }
+        
+        .top-left {
+            top: -150px;
+            left: -150px;
+        }
+        
+        .bottom-right {
+            bottom: -150px;
+            right: -150px;
+        }
+        
+        .primary-corner {
+            position: fixed;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, color-mix(in oklch, var(--primary) 15%, transparent) 0%, transparent 70%);
+            z-index: -1;
+        }
+        
+        .top-right {
+            top: -80px;
+            right: -80px;
+        }
+        
+        .bottom-left {
+            bottom: -80px;
+            left: -80px;
+        }
+        
+        .company-name {
+            color: var(--primary);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="decorative-corner top-left"></div>
+    <div class="decorative-corner bottom-right"></div>
+    <div class="primary-corner top-right"></div>
+    <div class="primary-corner bottom-left"></div>
+    
+    <div class="container">
+        <header class="header animate-fade-in-up">
+            <h1>MIT License</h1>
+            <div class="last-updated">Last Updated: <span id="current-year"></span></div>
+        </header>
+        
+        <main class="content animate-fade-in">
+            <h2>License Information</h2>
+            <p>The MIT License is a permissive free software license originating at the Massachusetts Institute of Technology. It puts only very limited restriction on reuse and has therefore high license compatibility.</p>
+            
+            <div class="highlight-box">
+                <p><strong>Notice:</strong> This license applies to all software, documentation, and associated materials released by <span class="company-name">Invariant Ego, LLC</span> under the MIT License.</p>
+            </div>
+            
+            <h2>Full License Text</h2>
+            <div class="license-text">
+Copyright (c) <span id="license-year"></span> Invariant Ego, LLC
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+            </div>
+            
+            <h2>Permissions</h2>
+            <div class="permissions-grid">
+                <div class="permission-item">
+                    <div class="permission-title">Commercial Use</div>
+                    <div class="permission-desc">The software may be used for commercial purposes.</div>
+                </div>
+                <div class="permission-item">
+                    <div class="permission-title">Modification</div>
+                    <div class="permission-desc">The software may be modified and changed.</div>
+                </div>
+                <div class="permission-item">
+                    <div class="permission-title">Distribution</div>
+                    <div class="permission-desc">The software may be distributed and shared.</div>
+                </div>
+                <div class="permission-item">
+                    <div class="permission-title">Private Use</div>
+                    <div class="permission-desc">The software may be used and modified privately.</div>
+                </div>
+                <div class="permission-item">
+                    <div class="permission-title">Sublicensing</div>
+                    <div class="permission-desc">The software may be included in other works with different licenses.</div>
+                </div>
+                <div class="permission-item">
+                    <div class="permission-title">Patent Grant</div>
+                    <div class="permission-desc">License includes an express grant of patent rights from contributors.</div>
+                </div>
+            </div>
+            
+            <h2>Limitations</h2>
+            <ul>
+                <li><strong>Liability:</strong> The license includes a limitation of liability.</li>
+                <li><strong>Warranty:</strong> The license expressly states that it does not provide any warranty.</li>
+            </ul>
+            
+            <h2>Conditions</h2>
+            <p>The only condition for reuse is that the license and copyright notice must be included in all copies or substantial portions of the software.</p>
+            
+            <div class="highlight-box">
+                <h3>Compatibility</h3>
+                <p>The MIT License is compatible with many copyleft licenses, such as the GNU General Public License (GPL). MIT-licensed software can be integrated into GPL-licensed software, but not vice versa.</p>
+            </div>
+            
+            <h2>Contact Information</h2>
+            <p>For questions regarding this license or licensing terms for <span class="company-name">Invariant Ego, LLC</span> software, please refer to the project documentation or contact the maintainers.</p>
+        </main>
+        
+        <footer class="footer animate-fade-in-up">
+            <p><span class="primary-dot"></span> © <span id="footer-year"></span> <span class="company-name">Invariant Ego, LLC</span>. All rights reserved. <span class="primary-dot"></span></p>
+            <p style="margin-top: 0.5rem; font-size: 0.8rem;">MIT License • Open Source Initiative Approved</p>
+        </footer>
+    </div>
+
+    <script>
+        // Set current year automatically in multiple places
+        const currentYear = new Date().getFullYear();
+        document.getElementById('current-year').textContent = currentYear;
+        document.getElementById('license-year').textContent = currentYear;
+        document.getElementById('footer-year').textContent = currentYear;
+        
+        // Optional: Add print functionality
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'p') {
+                e.preventDefault();
+                window.print();
+            }
+        });
+    </script>
+</body>
+</html>
