@@ -1,0 +1,19 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/api/check-db/route": "/api/check-db",
+  "/api/debug/setup-client/route": "/api/debug/setup-client",
+  "/api/health/route": "/api/health",
+  "/api/redis/route": "/api/redis",
+  "/api/seed/route": "/api/seed",
+  "/api/sms/send/route": "/api/sms/send",
+  "/api/test/route": "/api/test",
+  "/api/twilio/call-completed/route": "/api/twilio/call-completed",
+  "/api/twilio/incoming-call/route": "/api/twilio/incoming-call",
+  "/api/twilio/incoming-sms/route": "/api/twilio/incoming-sms",
+  "/api/twilio/sms-status/route": "/api/twilio/sms-status",
+  "/api/twilio/token/route": "/api/twilio/token",
+  "/api/twilio/voicemail-completed/route": "/api/twilio/voicemail-completed",
+  "/login/page": "/login",
+  "/page": "/"
+}

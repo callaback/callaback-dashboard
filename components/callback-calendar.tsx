@@ -291,6 +291,8 @@ export function CallbackCalendar() {
               <p className="text-xs text-muted-foreground dark:text-slate-400 text-center py-4">No upcoming bookings</p>
             )}
           </div>
+        </div>
+          </div>
         </ScrollArea>
       </CardContent>
     </Card>
