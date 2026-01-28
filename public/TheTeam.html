@@ -5,65 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Callaback | Meet Our Team</title>
     <style>
-        /* Import your theme variables */
         :root {
-            /* Light theme colors from your CSS */
             --background: oklch(0.98 0.005 240);
             --foreground: oklch(0.15 0.015 260);
             --card: oklch(1 0 0);
-            --card-foreground: oklch(0.15 0.015 260);
             --primary: oklch(0.55 0.22 200);
             --primary-foreground: oklch(0.98 0 0);
-            --secondary: oklch(0.92 0.01 240);
-            --secondary-foreground: oklch(0.15 0.015 260);
-            --muted: oklch(0.94 0.008 240);
             --muted-foreground: oklch(0.48 0.01 260);
-            --accent: oklch(0.88 0.015 240);
-            --accent-foreground: oklch(0.15 0.015 260);
-            --destructive: oklch(0.58 0.24 25);
             --border: oklch(0.88 0.01 240);
-            --input: oklch(0.92 0.008 240);
-            --ring: oklch(0.55 0.22 200);
             --radius: 0.75rem;
-            
-            /* Gradients */
-            --gradient-subtle: linear-gradient(135deg, oklch(0.99 0.005 240) 0%, oklch(0.97 0.008 220) 100%);
-            --gradient-card: linear-gradient(to bottom, oklch(1 0 0) 0%, oklch(0.995 0.002 240) 100%);
-            
-            /* Shadows */
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
-            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.05);
         }
 
         .dark {
-            /* Dark theme colors from your CSS */
             --background: oklch(0.11 0.015 260);
             --foreground: oklch(0.96 0.005 240);
             --card: oklch(0.15 0.018 260);
-            --card-foreground: oklch(0.96 0.005 240);
             --primary: oklch(0.65 0.22 200);
             --primary-foreground: oklch(0.11 0.015 260);
-            --secondary: oklch(0.2 0.02 260);
-            --secondary-foreground: oklch(0.92 0.005 240);
-            --muted: oklch(0.18 0.018 260);
             --muted-foreground: oklch(0.62 0.008 240);
-            --accent: oklch(0.22 0.02 260);
-            --destructive: oklch(0.58 0.24 25);
             --border: oklch(0.25 0.02 260);
-            --input: oklch(0.2 0.02 260);
-            --ring: oklch(0.65 0.22 200);
-            
-            /* Dark gradients */
-            --gradient-subtle: linear-gradient(135deg, oklch(0.12 0.016 260) 0%, oklch(0.14 0.018 250) 100%);
-            --gradient-card: linear-gradient(to bottom, oklch(0.15 0.018 260) 0%, oklch(0.14 0.017 260) 100%);
-            
-            /* Dark shadows */
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.4);
-            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.6), 0 8px 10px -6px rgb(0 0 0 / 0.4);
         }
         
         * {
@@ -73,129 +33,47 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
             color: var(--foreground);
-            background: var(--gradient-subtle);
+            background: var(--background);
             min-height: 100vh;
-            padding: 0;
-            font-feature-settings: 'rlig' 1, 'calt' 1, 'ss01' 1;
-            text-rendering: optimizeLegibility;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem 1.5rem;
-            position: relative;
+            padding: 1rem;
         }
         
         .header {
             text-align: center;
-            margin-bottom: 3rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid var(--border);
-            position: relative;
-        }
-        
-        .header::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 150px;
-            height: 3px;
-            background: var(--primary);
-            border-radius: 2px;
+            margin-bottom: 2rem;
+            padding: 2rem 0;
         }
         
         h1 {
-            font-size: 3.2rem;
+            font-size: clamp(2rem, 5vw, 3.5rem);
             font-weight: 800;
-            margin-bottom: 0.5rem;
-            color: var(--foreground);
+            margin-bottom: 1rem;
             background: linear-gradient(135deg, var(--primary), oklch(0.6 0.2 145));
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            letter-spacing: -0.5px;
         }
         
         .tagline {
             color: var(--muted-foreground);
-            font-size: 1.4rem;
-            letter-spacing: 0.5px;
-            margin-top: 0.5rem;
-            font-weight: 400;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.4;
-        }
-        
-        .content {
-            background: var(--gradient-card);
-            backdrop-filter: blur(10px);
-            border-radius: calc(var(--radius) * 1.5);
-            padding: 3rem;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow-xl);
-            margin-bottom: 3rem;
-        }
-        
-        h2 {
-            font-size: 2rem;
-            margin: 2.5rem 0 1.5rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 2px solid var(--primary);
-            color: var(--foreground);
-            position: relative;
-        }
-        
-        h2:first-of-type {
-            margin-top: 0;
-        }
-        
-        h3 {
-            font-size: 1.4rem;
-            margin: 2rem 0 1rem;
-            color: var(--primary);
-        }
-        
-        p {
+            font-size: clamp(1rem, 3vw, 1.3rem);
             margin-bottom: 1.5rem;
-            color: var(--muted-foreground);
-            font-size: 1.1rem;
-            line-height: 1.7;
-        }
-        
-        .mission-statement {
-            font-size: 1.2rem;
-            font-style: italic;
-            color: var(--primary);
-            padding: 1.5rem;
-            border-left: 4px solid var(--primary);
-            background-color: color-mix(in oklch, var(--primary) 5%, transparent);
-            border-radius: 0 var(--radius) var(--radius) 0;
-            margin: 2.5rem 0;
-        }
-        
-        /* Team Styles */
-        .team-intro {
-            background-color: color-mix(in oklch, var(--primary) 8%, transparent);
-            border-radius: var(--radius);
-            padding: 2rem;
-            margin: 2rem 0 3rem;
-            border: 1px solid color-mix(in oklch, var(--primary) 20%, transparent);
         }
         
         .team-culture {
-            font-size: 1.1rem;
-            margin-bottom: 1.5rem;
-            line-height: 1.8;
+            color: var(--muted-foreground);
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
         }
         
         .culture-highlight {
@@ -203,62 +81,63 @@
             font-weight: 600;
         }
         
-        /* Carousel Styles */
-        .carousel-container {
-            position: relative;
-            overflow: hidden;
-            margin: 3rem 0;
+        .content {
+            background: var(--card);
             border-radius: var(--radius);
+            padding: clamp(1rem, 4vw, 2rem);
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
         }
         
-        .carousel-track {
-            display: flex;
-            transition: transform 0.5s ease-in-out;
-            width: 100%;
+        .team-intro {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .team-intro h2 {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            margin-bottom: 0.5rem;
+            color: var(--foreground);
+        }
+        
+        .team-intro p {
+            color: var(--muted-foreground);
+            font-size: 0.9rem;
+        }
+        
+        /* Mobile-first team grid */
+        .team-grid {
+            display: grid;
+            gap: 1.5rem;
+            margin: 2rem 0;
         }
         
         .team-card {
-            background: var(--gradient-card);
+            background: var(--card);
             border-radius: var(--radius);
-            overflow: hidden;
             border: 1px solid var(--border);
-            box-shadow: var(--shadow-md);
-            min-width: 100%;
-            flex-shrink: 0;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.2s ease;
         }
         
         .team-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-xl);
+            transform: translateY(-2px);
         }
         
         .team-avatar {
-            width: 100%;
-            height: 280px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: color-mix(in oklch, var(--primary) 10%, transparent);
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--border);
+            margin-bottom: 1rem;
         }
         
         .team-avatar img {
-            width: 180px;
-            height: 180px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid var(--primary);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .team-info {
-            padding: 1.5rem;
+            border: 3px solid var(--primary);
         }
         
         .team-name {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
             color: var(--foreground);
@@ -267,25 +146,28 @@
         .team-title {
             color: var(--primary);
             font-weight: 600;
-            margin-bottom: 1.2rem;
-            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
         }
         
-        .team-roles {
-            margin-top: 1rem;
+        .team-description {
+            font-size: 0.9rem;
+            color: var(--muted-foreground);
+            margin-bottom: 1rem;
+            line-height: 1.5;
         }
         
         .role-list {
-            list-style-type: none;
-            margin-top: 0.5rem;
+            list-style: none;
+            text-align: left;
         }
         
         .role-list li {
-            padding: 0.4rem 0;
+            padding: 0.3rem 0;
             color: var(--muted-foreground);
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             position: relative;
-            padding-left: 1.2rem;
+            padding-left: 1rem;
         }
         
         .role-list li:before {
@@ -293,82 +175,24 @@
             color: var(--primary);
             position: absolute;
             left: 0;
-            font-size: 1.2rem;
         }
         
-        /* Carousel Navigation */
-        .carousel-nav {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 2rem;
-            gap: 1.5rem;
-        }
-        
-        .carousel-btn {
-            background: var(--primary);
-            color: var(--primary-foreground);
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1.2rem;
-            box-shadow: var(--shadow-md);
-        }
-        
-        .carousel-btn:hover {
-            background: color-mix(in oklch, var(--primary) 80%, black);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .carousel-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .carousel-dots {
-            display: flex;
-            gap: 0.75rem;
-            margin: 0 1rem;
-        }
-        
-        .carousel-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--border);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .carousel-dot.active {
-            background: var(--primary);
-            transform: scale(1.2);
-        }
-        
-        .carousel-dot:hover {
-            background: color-mix(in oklch, var(--primary) 60%, transparent);
-        }
-        
-        /* Team Counter */
-        .team-counter {
+        .mission-statement {
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            font-style: italic;
+            color: var(--primary);
+            padding: 1.5rem;
+            border-left: 4px solid var(--primary);
+            background: color-mix(in oklch, var(--primary) 5%, transparent);
+            border-radius: 0 var(--radius) var(--radius) 0;
+            margin: 2rem 0;
             text-align: center;
-            margin-top: 1.5rem;
-            color: var(--muted-foreground);
-            font-size: 0.95rem;
         }
         
         .footer {
             text-align: center;
-            margin-top: 4rem;
-            padding-top: 2rem;
+            margin-top: 3rem;
+            padding: 2rem 0;
             border-top: 1px solid var(--border);
             color: var(--muted-foreground);
             font-size: 0.9rem;
@@ -379,456 +203,147 @@
             font-weight: 700;
         }
         
-        .primary-dot {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background-color: var(--primary);
-            border-radius: 50%;
-            margin: 0 12px;
-            vertical-align: middle;
-        }
-        
-        /* Smooth scrolling */
-        html {
-            scroll-behavior: smooth;
-        }
-        
-        /* Better selection colors */
-        ::selection {
-            background-color: color-mix(in oklch, var(--primary) 20%, transparent);
-            color: inherit;
-        }
-        
-        /* Enhanced focus styles for accessibility */
-        :focus-visible {
-            outline: 2px solid var(--ring);
-            outline-offset: 2px;
-            border-radius: 2px;
-        }
-        
-        @media (max-width: 768px) {
+        /* Tablet and up */
+        @media (min-width: 768px) {
             .container {
-                padding: 1.5rem 1rem;
-            }
-            
-            h1 {
-                font-size: 2.5rem;
-            }
-            
-            .tagline {
-                font-size: 1.2rem;
-            }
-            
-            .content {
                 padding: 2rem;
             }
             
-            h2 {
-                font-size: 1.7rem;
-            }
-            
-            .team-avatar {
-                height: 240px;
+            .team-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
             }
             
             .team-avatar img {
-                width: 160px;
-                height: 160px;
+                width: 100px;
+                height: 100px;
             }
             
-            .carousel-btn {
-                width: 45px;
-                height: 45px;
+            .team-card {
+                padding: 2rem;
             }
         }
         
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 2rem;
+        /* Desktop */
+        @media (min-width: 1024px) {
+            .team-grid {
+                grid-template-columns: repeat(2, 1fr);
+                max-width: 900px;
+                margin: 2rem auto;
             }
             
-            .tagline {
-                font-size: 1.1rem;
+            .team-avatar img {
+                width: 120px;
+                height: 120px;
+            }
+        }
+        
+        /* Large desktop */
+        @media (min-width: 1200px) {
+            .team-grid {
+                grid-template-columns: repeat(4, 1fr);
+                max-width: 1200px;
             }
             
-            .content {
+            .team-card {
                 padding: 1.5rem;
             }
             
-            h2 {
-                font-size: 1.5rem;
-            }
-            
-            .team-avatar {
-                height: 220px;
-            }
-            
             .team-avatar img {
-                width: 140px;
-                height: 140px;
+                width: 100px;
+                height: 100px;
             }
-            
-            .carousel-nav {
-                flex-wrap: wrap;
-            }
-        }
-        
-        /* Professional animations */
-        @keyframes fade-in-up {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes fade-in {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .animate-fade-in-up {
-            animation: fade-in-up 0.6s ease-out;
-        }
-        
-        .animate-fade-in {
-            animation: fade-in 0.4s ease-out;
-        }
-        
-        .delay-100 {
-            animation-delay: 100ms;
-        }
-        
-        .delay-200 {
-            animation-delay: 200ms;
-        }
-        
-        .delay-300 {
-            animation-delay: 300ms;
-        }
-        
-        .delay-400 {
-            animation-delay: 400ms;
-        }
-        
-        .delay-500 {
-            animation-delay: 500ms;
-        }
-        
-        /* Decorative elements with theme colors */
-        .decorative-corner {
-            position: fixed;
-            width: 400px;
-            height: 400px;
-            border-radius: 50%;
-            background: radial-gradient(circle, color-mix(in oklch, var(--background) 70%, transparent) 0%, transparent 70%);
-            z-index: -1;
-        }
-        
-        .top-left {
-            top: -200px;
-            left: -200px;
-        }
-        
-        .bottom-right {
-            bottom: -200px;
-            right: -200px;
-        }
-        
-        .primary-corner {
-            position: fixed;
-            width: 250px;
-            height: 250px;
-            border-radius: 50%;
-            background: radial-gradient(circle, color-mix(in oklch, var(--primary) 15%, transparent) 0%, transparent 70%);
-            z-index: -1;
-        }
-        
-        .top-right {
-            top: -100px;
-            right: -100px;
-        }
-        
-        .bottom-left {
-            bottom: -100px;
-            left: -100px;
         }
     </style>
 </head>
 <body>
-    <div class="decorative-corner top-left"></div>
-    <div class="decorative-corner bottom-right"></div>
-    <div class="primary-corner top-right"></div>
-    <div class="primary-corner bottom-left"></div>
-    
     <div class="container">
-        <header class="header animate-fade-in-up">
+        <header class="header">
             <h1>Meet the Callaback Team</h1>
             <div class="tagline">The passionate minds behind the system that never misses a call</div>
-            <p class="team-culture animate-fade-in delay-200" style="margin-top: 1.5rem; max-width: 900px;">
-                We're <span class="culture-highlight">relaxed, open, and collaborative</span>—sometimes even <span class="culture-highlight">playful</span> and <span class="culture-highlight">crazy</span>. But we're <span class="culture-highlight">crazy-serious about shipping awesome experiences</span>, always focused on supporting our clients, working directly with them together for the best possible outcome.
+            <p class="team-culture">
+                We're <span class="culture-highlight">relaxed, open, and collaborative</span>—sometimes even <span class="culture-highlight">playful</span> and <span class="culture-highlight">crazy</span>. But we're <span class="culture-highlight">crazy-serious about shipping awesome experiences</span>, always focused on supporting our clients.
             </p>
         </header>
         
-        <main class="content animate-fade-in">
-            <div class="team-intro animate-fade-in-up delay-100">
-                <h2 style="margin-top: 0; border-bottom: none; padding-bottom: 0;">The Core Team</h2>
-                <p style="margin-bottom: 0; color: var(--muted-foreground);">
-                    As of 15 January 2026
-                </p>
+        <main class="content">
+            <div class="team-intro">
+                <h2>The Core Team</h2>
+                <p>As of 15 January 2026</p>
             </div>
             
-            <!-- Carousel Container -->
-            <div class="carousel-container">
-                <div class="carousel-track" id="carousel-track">
-                    <!-- Bret -->
-                    <div class="team-card">
-                        <div class="team-avatar">
-                            <img src="https://api.dicebear.com/9.x/toon-head/svg?seed=Bret" alt="Bret avatar">
-                        </div>
-                        <div class="team-info">
-                            <h3 class="team-name">Bret</h3>
-                            <div class="team-title">Co-founder, Head of Outreach & Operations</div>
-                            <p style="font-size: 0.95rem; color: var(--muted-foreground); margin-bottom: 0.5rem;">
-                                The connector who ensures our clients get the support they need.
-                            </p>
-                            <div class="team-roles">
-                                <div class="role-list">
-                                    <li>Sales conversations</li>
-                                    <li>Customer service & support</li>
-                                    <li>Process improvement</li>
-                                    <li>Implementer</li>
-                                    <li>Product owner</li>
-                                </div>
-                            </div>
-                        </div>
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="team-avatar">
+                        <img src="https://api.dicebear.com/9.x/toon-head/svg?seed=Bret" alt="Bret avatar">
                     </div>
-                    
-                    <!-- Daniel -->
-                    <div class="team-card">
-                        <div class="team-avatar">
-                            <img src="https://api.dicebear.com/9.x/toon-head/svg?seed=Easton" alt="Daniel avatar">
-                        </div>
-                        <div class="team-info">
-                            <h3 class="team-name">Daniel</h3>
-                            <div class="team-title">Co-founder, Head of Engineering & Operations</div>
-                            <p style="font-size: 0.95rem; color: var(--muted-foreground); margin-bottom: 0.5rem;">
-                                The architect building robust systems that stand the test of time.
-                            </p>
-                            <div class="team-roles">
-                                <div class="role-list">
-                                    <li>Senior full-stack engineer</li>
-                                    <li>Product owner</li>
-                                    <li>Architecture & dev lead</li>
-                                    <li>Implementer</li>
-                                    <li>Customer service & support</li>
-                                    <li>Process improvement</li>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Jesse -->
-                    <div class="team-card">
-                        <div class="team-avatar">
-                            <img src="https://api.dicebear.com/9.x/toon-head/svg?seed=Brian" alt="Jesse avatar">
-                        </div>
-                        <div class="team-info">
-                            <h3 class="team-name">Jesse</h3>
-                            <div class="team-title">Co-founder, Head of Design & Operations</div>
-                            <p style="font-size: 0.95rem; color: var(--muted-foreground); margin-bottom: 0.5rem;">
-                                The creative force ensuring our solutions are both beautiful and functional.
-                            </p>
-                            <div class="team-roles">
-                                <div class="role-list">
-                                    <li>Senior full-stack engineer</li>
-                                    <li>Product owner</li>
-                                    <li>Architecture & dev lead</li>
-                                    <li>Implementer</li>
-                                    <li>Customer service & support</li>
-                                    <li>Process improvement</li>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Keith -->
-                    <div class="team-card">
-                        <div class="team-avatar">
-                            <img src="https://api.dicebear.com/9.x/toon-head/svg?seed=Ryan" alt="Keith avatar">
-                        </div>
-                        <div class="team-info">
-                            <h3 class="team-name">Keith</h3>
-                            <div class="team-title">Co-founder, Head of Engineering & Operations</div>
-                            <p style="font-size: 0.95rem; color: var(--muted-foreground); margin-bottom: 0.5rem;">
-                                The technical backbone ensuring everything runs smoothly at scale.
-                            </p>
-                            <div class="team-roles">
-                                <div class="role-list">
-                                    <li>Senior full-stack engineer</li>
-                                    <li>Product owner</li>
-                                    <li>Architecture & dev lead</li>
-                                    <li>Implementer</li>
-                                    <li>Customer service & support</li>
-                                    <li>Process improvement</li>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <h3 class="team-name">Bret</h3>
+                    <div class="team-title">Co-founder, Head of Outreach & Operations</div>
+                    <p class="team-description">The connector who ensures our clients get the support they need.</p>
+                    <ul class="role-list">
+                        <li>Sales conversations</li>
+                        <li>Customer service & support</li>
+                        <li>Process improvement</li>
+                        <li>Product owner</li>
+                    </ul>
                 </div>
                 
-                <!-- Carousel Navigation -->
-                <div class="carousel-nav">
-                    <button class="carousel-btn" id="prev-btn" aria-label="Previous team member">
-                        ←
-                    </button>
-                    
-                    <div class="carousel-dots" id="carousel-dots">
-                        <!-- Dots will be generated by JavaScript -->
+                <div class="team-card">
+                    <div class="team-avatar">
+                        <img src="https://api.dicebear.com/9.x/toon-head/svg?seed=Easton" alt="Daniel avatar">
                     </div>
-                    
-                    <button class="carousel-btn" id="next-btn" aria-label="Next team member">
-                        →
-                    </button>
+                    <h3 class="team-name">Daniel</h3>
+                    <div class="team-title">Co-founder, Head of Engineering & Operations</div>
+                    <p class="team-description">The architect building robust systems that stand the test of time.</p>
+                    <ul class="role-list">
+                        <li>Senior full-stack engineer</li>
+                        <li>Architecture & dev lead</li>
+                        <li>Product owner</li>
+                        <li>Customer service & support</li>
+                    </ul>
                 </div>
                 
-                <div class="team-counter">
-                    <span id="current-slide">1</span> of <span id="total-slides">4</span>
+                <div class="team-card">
+                    <div class="team-avatar">
+                        <img src="https://api.dicebear.com/9.x/toon-head/svg?seed=Brian" alt="Jesse avatar">
+                    </div>
+                    <h3 class="team-name">Jesse</h3>
+                    <div class="team-title">Co-founder, Head of Design & Operations</div>
+                    <p class="team-description">The creative force ensuring our solutions are both beautiful and functional.</p>
+                    <ul class="role-list">
+                        <li>Senior full-stack engineer</li>
+                        <li>Product owner</li>
+                        <li>Architecture & dev lead</li>
+                        <li>Customer service & support</li>
+                    </ul>
+                </div>
+                
+                <div class="team-card">
+                    <div class="team-avatar">
+                        <img src="https://api.dicebear.com/9.x/toon-head/svg?seed=Ryan" alt="Keith avatar">
+                    </div>
+                    <h3 class="team-name">Keith</h3>
+                    <div class="team-title">Co-founder, Head of Engineering & Operations</div>
+                    <p class="team-description">The technical backbone ensuring everything runs smoothly at scale.</p>
+                    <ul class="role-list">
+                        <li>Senior full-stack engineer</li>
+                        <li>Product owner</li>
+                        <li>Architecture & dev lead</li>
+                        <li>Customer service & support</li>
+                    </ul>
                 </div>
             </div>
             
-            <div class="mission-statement animate-fade-in-up delay-400">
+            <div class="mission-statement">
                 We're more than just a team—we're a collaborative force dedicated to solving real-world problems with technology that just works.
             </div>
-            
         </main>
         
-        <footer class="footer animate-fade-in-up delay-400">
-            <p><span class="primary-dot"></span> <span class="company-name">Callaback Team</span> — Building the system that never misses a call <span class="primary-dot"></span></p>
+        <footer class="footer">
+            <p><span class="company-name">Callaback Team</span> — Building the system that never misses a call</p>
             <p style="margin-top: 1rem; font-size: 0.85rem;">© 2026 Callaback. All technology, all teamwork, all focused on your success.</p>
         </footer>
     </div>
-
-    <script>
-        // Set current year automatically
-        const currentYear = new Date().getFullYear();
-        document.querySelectorAll('#current-year').forEach(el => {
-            el.textContent = currentYear;
-        });
-        
-        // Carousel functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const track = document.getElementById('carousel-track');
-            const slides = Array.from(track.children);
-            const prevBtn = document.getElementById('prev-btn');
-            const nextBtn = document.getElementById('next-btn');
-            const dotsContainer = document.getElementById('carousel-dots');
-            const currentSlideSpan = document.getElementById('current-slide');
-            const totalSlidesSpan = document.getElementById('total-slides');
-            
-            let currentSlide = 0;
-            const totalSlides = slides.length;
-            
-            // Update total slides display
-            totalSlidesSpan.textContent = totalSlides;
-            
-            // Create dots
-            slides.forEach((_, index) => {
-                const dot = document.createElement('div');
-                dot.classList.add('carousel-dot');
-                if (index === 0) dot.classList.add('active');
-                dot.setAttribute('data-index', index);
-                dot.addEventListener('click', () => goToSlide(index));
-                dotsContainer.appendChild(dot);
-            });
-            
-            // Update carousel position
-            function updateCarousel() {
-                track.style.transform = `translateX(-${currentSlide * 100}%)`;
-                
-                // Update active dot
-                document.querySelectorAll('.carousel-dot').forEach((dot, index) => {
-                    dot.classList.toggle('active', index === currentSlide);
-                });
-                
-                // Update slide counter
-                currentSlideSpan.textContent = currentSlide + 1;
-                
-                // Update button states
-                prevBtn.disabled = currentSlide === 0;
-                nextBtn.disabled = currentSlide === totalSlides - 1;
-            }
-            
-            // Go to specific slide
-            function goToSlide(index) {
-                currentSlide = index;
-                updateCarousel();
-            }
-            
-            // Next slide
-            function nextSlide() {
-                if (currentSlide < totalSlides - 1) {
-                    currentSlide++;
-                    updateCarousel();
-                }
-            }
-            
-            // Previous slide
-            function prevSlide() {
-                if (currentSlide > 0) {
-                    currentSlide--;
-                    updateCarousel();
-                }
-            }
-            
-            // Event listeners
-            prevBtn.addEventListener('click', prevSlide);
-            nextBtn.addEventListener('click', nextSlide);
-            
-            // Keyboard navigation
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'ArrowLeft') prevSlide();
-                if (e.key === 'ArrowRight') nextSlide();
-            });
-            
-            // Auto-advance carousel every 8 seconds
-            let autoSlide = setInterval(nextSlide, 8000);
-            
-            // Pause auto-advance on hover
-            const carouselContainer = document.querySelector('.carousel-container');
-            carouselContainer.addEventListener('mouseenter', () => {
-                clearInterval(autoSlide);
-            });
-            
-            carouselContainer.addEventListener('mouseleave', () => {
-                autoSlide = setInterval(nextSlide, 8000);
-            });
-            
-            // Initialize
-            updateCarousel();
-            
-            // Add scroll animations
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('animate-fade-in-up');
-                    }
-                });
-            }, observerOptions);
-            
-            document.querySelectorAll('h2, h3, p, .team-card').forEach(el => {
-                observer.observe(el);
-            });
-        });
-    </script>
 </body>
 </html>
+
