@@ -706,14 +706,17 @@ export default function DashboardPage() {
       <main className="max-w-[2000px] mx-auto p-4 pb-8 w-full">
         {/* PDF Generator */}
         <div className="mb-4 flex gap-2 items-center">
-          <Input
-            placeholder="Name or URL (e.g., example.com)"
-            value={pdfInput}
-            onChange={(e) => setPdfInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleGeneratePdf()}
-            disabled={isPdfLoading}
-            className="text-sm flex-1"
-          />
+          <div className="relative flex-1">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm pointer-events-none">https://</span>
+            <Input
+              placeholder="example.com or name"
+              value={pdfInput}
+              onChange={(e) => setPdfInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleGeneratePdf()}
+              disabled={isPdfLoading}
+              className="text-sm flex-1 pl-16"
+            />
+          </div>
           <Button
             size="sm"
             onClick={handleGeneratePdf}
