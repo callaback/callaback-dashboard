@@ -138,7 +138,7 @@ export function CallbackCalendar() {
       </CardHeader>
       <CardContent className="flex-1 flex flex-col gap-3 overflow-hidden">
         {/* Calendar */}
-        <div className="border rounded-lg p-3 bg-slate-50">
+        <div className="border rounded-lg p-3 bg-slate-50 dark:bg-slate-800 dark:border-slate-700">
           {/* Month Navigation */}
           <div className="flex items-center justify-between mb-3">
             <Button
@@ -149,7 +149,7 @@ export function CallbackCalendar() {
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <p className="text-sm font-semibold">{monthName}</p>
+            <p className="text-sm font-semibold dark:text-slate-100">{monthName}</p>
             <Button
               variant="ghost"
               size="icon"
@@ -163,7 +163,7 @@ export function CallbackCalendar() {
           {/* Day Headers */}
           <div className="grid grid-cols-7 gap-1 mb-2">
             {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(day => (
-              <div key={day} className="text-center text-xs font-semibold text-slate-600 py-1">
+              <div key={day} className="text-center text-xs font-semibold text-slate-600 dark:text-slate-400 py-1">
                 {day}
               </div>
             ))}
@@ -188,10 +188,10 @@ export function CallbackCalendar() {
                     isSelected
                       ? "bg-primary text-white"
                       : isToday
-                      ? "bg-blue-100 text-blue-900 border border-blue-300"
+                      ? "bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100 border border-blue-300 dark:border-blue-700"
                       : dayBookings.length > 0
-                      ? "bg-amber-100 text-amber-900"
-                      : "hover:bg-slate-200"
+                      ? "bg-amber-100 dark:bg-amber-900 text-amber-900 dark:text-amber-100"
+                      : "hover:bg-slate-200 dark:hover:bg-slate-700 dark:text-slate-300"
                   }`}
                 >
                   {day}
@@ -206,8 +206,8 @@ export function CallbackCalendar() {
 
         {/* Time Slots */}
         {selectedDate && (
-          <div className="border rounded-lg p-3 bg-slate-50">
-            <p className="text-xs font-semibold mb-2">Select Time</p>
+          <div className="border rounded-lg p-3 bg-slate-50 dark:bg-slate-800 dark:border-slate-700">
+            <p className="text-xs font-semibold mb-2 dark:text-slate-100">Select Time</p>
             <div className="grid grid-cols-4 gap-1 max-h-[120px] overflow-y-auto">
               {timeSlots.map(time => {
                 const isBooked = isSlotBooked(selectedDate, time)
@@ -222,8 +222,8 @@ export function CallbackCalendar() {
                       isSelected
                         ? "bg-primary text-white"
                         : isBooked
-                        ? "bg-red-100 text-red-600 cursor-not-allowed opacity-50"
-                        : "bg-white border hover:bg-slate-100"
+                        ? "bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-200 cursor-not-allowed opacity-50"
+                        : "bg-white dark:bg-slate-700 border dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600 dark:text-slate-300"
                     }`}
                   >
                     {time}
@@ -236,14 +236,14 @@ export function CallbackCalendar() {
 
         {/* Phone Input */}
         {selectedDate && selectedTime && (
-          <div className="border rounded-lg p-3 bg-slate-50">
-            <label className="text-xs font-semibold block mb-2">Phone Number</label>
+          <div className="border rounded-lg p-3 bg-slate-50 dark:bg-slate-800 dark:border-slate-700">
+            <label className="text-xs font-semibold block mb-2 dark:text-slate-100">Phone Number</label>
             <Input
               type="tel"
               placeholder="(555) 123-4567"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
-              className="text-sm mb-2"
+              className="text-sm mb-2 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
             />
             <Button
               size="sm"
@@ -258,19 +258,19 @@ export function CallbackCalendar() {
         )}
 
         {/* Upcoming Bookings */}
-        <div className="border rounded-lg p-3 bg-slate-50 flex-1 overflow-y-auto">
-          <p className="text-xs font-semibold mb-2">Upcoming</p>
+        <div className="border rounded-lg p-3 bg-slate-50 dark:bg-slate-800 dark:border-slate-700 flex-1 overflow-y-auto">
+          <p className="text-xs font-semibold mb-2 dark:text-slate-100">Upcoming</p>
           <div className="space-y-2">
             {bookings
               .filter(b => new Date(`${b.date}T${b.time}`) > new Date())
               .slice(0, 5)
               .map(booking => (
-                <div key={booking.id} className="flex items-center justify-between text-xs p-2 bg-white rounded border">
+                <div key={booking.id} className="flex items-center justify-between text-xs p-2 bg-white dark:bg-slate-700 rounded border dark:border-slate-600">
                   <div className="flex items-center gap-2">
                     <Clock className="h-3 w-3 text-primary" />
                     <div>
-                      <p className="font-medium">{booking.date} {booking.time}</p>
-                      <p className="text-muted-foreground">{booking.phone}</p>
+                      <p className="font-medium dark:text-slate-100">{booking.date} {booking.time}</p>
+                      <p className="text-muted-foreground dark:text-slate-400">{booking.phone}</p>
                     </div>
                   </div>
                   <Button
@@ -284,7 +284,7 @@ export function CallbackCalendar() {
                 </div>
               ))}
             {bookings.filter(b => new Date(`${b.date}T${b.time}`) > new Date()).length === 0 && (
-              <p className="text-xs text-muted-foreground text-center py-4">No upcoming bookings</p>
+              <p className="text-xs text-muted-foreground dark:text-slate-400 text-center py-4">No upcoming bookings</p>
             )}
           </div>
         </div>
