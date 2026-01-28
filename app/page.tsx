@@ -37,9 +37,6 @@ import { NotesLeadsPanel } from "@/components/notes-leads-panel"
 import { CallbackCalendar } from "@/components/callback-calendar"
 import { FileManager } from "@/components/file-manager"
 
-// Initialize Supabase client
-const supabase = createClient()
-
 // YOUR PHONE NUMBER
 const YOUR_PHONE_NUMBER = "18444073511" // (844) 407-3511
 
@@ -99,6 +96,7 @@ interface SystemMetric {
 
 export default function DashboardPage() {
   const router = useRouter()
+  const supabase = createClient()
   const [activeTab, setActiveTab] = useState("overview")
   const [isLoading, setIsLoading] = useState(true)
   const [isAuthChecking, setIsAuthChecking] = useState(true)
