@@ -432,12 +432,12 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
             className="flex-1"
-            disabled={activeTab === 'chat' && connectionStatus !== 'connected'}
           />
           <Button 
             size="icon" 
             onClick={handleSend} 
-            disabled={!newMessage.trim() || (activeTab === 'chat' && connectionStatus !== 'connected')}
+            disabled={!newMessage.trim()}
+          >
           >
             <Send className="h-4 w-4" />
           </Button>
