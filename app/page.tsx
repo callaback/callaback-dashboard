@@ -218,7 +218,7 @@ export default function DashboardPage() {
     return () => {
       subscription.unsubscribe()
     }
-  }, [router]) // Only depend on router
+  }, []) // Only depend on router
 
   const dialPadButtons = [
     { digit: "1", letters: "" },
