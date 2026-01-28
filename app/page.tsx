@@ -694,39 +694,22 @@ export default function DashboardPage() {
 
       {/* Main Content */}
       <main className="max-w-[2000px] mx-auto p-4 pb-8 w-full">
-        {/* Time Range Selector + PDF Generator */}
-        <div className="mb-4 flex gap-3 items-end">
-          <div className="flex-1">
-            <Tabs value={timeRange} onValueChange={setTimeRange} className="w-full">
-              <TabsList className="grid w-full grid-cols-5">
-                <TabsTrigger value="today" className="text-xs">Today</TabsTrigger>
-                <TabsTrigger value="yesterday" className="text-xs">Yesterday</TabsTrigger>
-                <TabsTrigger value="week" className="text-xs">Week</TabsTrigger>
-                <TabsTrigger value="month" className="text-xs">Month</TabsTrigger>
-                <TabsTrigger value="all" className="text-xs">All</TabsTrigger>
-              </TabsList>
-            </Tabs>
-          </div>
-          
-          {/* PDF Generator */}
-          <div className="flex gap-2 items-end">
-            <div className="flex gap-2 flex-1 min-w-[300px]">
-              <Input
-                placeholder="Name or URL"
-                value={pdfInput}
-                onChange={(e) => setPdfInput(e.target.value)}
-                className="text-sm"
-              />
-              <Button
-                size="sm"
-                onClick={handleGeneratePdf}
-                disabled={!pdfInput.trim() || isPdfLoading}
-                className="whitespace-nowrap"
-              >
-                {isPdfLoading ? "Generating..." : "Generate PDF"}
-              </Button>
-            </div>
-          </div>
+        {/* PDF Generator */}
+        <div className="mb-4 flex gap-2 items-center">
+          <Input
+            placeholder="Name or URL"
+            value={pdfInput}
+            onChange={(e) => setPdfInput(e.target.value)}
+            className="text-sm flex-1"
+          />
+          <Button
+            size="sm"
+            onClick={handleGeneratePdf}
+            disabled={!pdfInput.trim() || isPdfLoading}
+            className="whitespace-nowrap"
+          >
+            {isPdfLoading ? "Generating..." : "Generate PDF"}
+          </Button>
         </div>
 
         {/* Metrics Grid - Top Overview */}
