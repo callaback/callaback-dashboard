@@ -918,34 +918,6 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
             
-            {/* SMS Quick Send */}
-            <Card className="flex-shrink-0">
-              <CardHeader className="pb-2 px-4 pt-4">
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <MessageSquare className="h-4 w-4 text-primary" />
-                  Quick SMS
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4 pt-0">
-                <Textarea
-                  placeholder="Type SMS message..."
-                  value={smsMessage}
-                  onChange={(e) => setSmsMessage(e.target.value)}
-                  rows={2}
-                  className="text-sm mb-2 resize-none"
-                />
-                <Button
-                  size="sm"
-                  className="w-full"
-                  onClick={handleSendSMS}
-                  disabled={!phoneNumber || !smsMessage.trim()}
-                >
-                  <MessageSquare className="h-3 w-3 mr-2" />
-                  Send SMS
-                </Button>
-              </CardContent>
-            </Card>
-            
             {/* File Manager - Takes remaining space */}
             <div className="h-[450px] flex flex-col gap-2">
               {generatedPdfUrl && (
