@@ -34,7 +34,7 @@ import { useRouter } from 'next/navigation'
 import { ContactsManager } from "@/components/contacts-manager"
 import { SyncChat } from "@/components/sync-chat"
 import { NotesLeadsPanel } from "@/components/notes-leads-panel"
-import { InteractionsPanel } from "@/components/interactions-panel"
+import { CallbackCalendar } from "@/components/callback-calendar"
 import { FileManager } from "@/components/file-manager"
 
 // Initialize Supabase client
@@ -943,11 +943,11 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* RIGHT COLUMN - Interactions + Notes */}
+          {/* RIGHT COLUMN - Callback Calendar + Notes */}
           <div className="lg:col-span-4 flex flex-col gap-3">
-            {/* Interactions Panel - Fixed height */}
+            {/* Callback Calendar - Fixed height */}
             <div className="h-[380px]">
-              <InteractionsPanel />
+              <CallbackCalendar />
             </div>
             
             {/* Notes/Leads Panel - Takes remaining space */}
