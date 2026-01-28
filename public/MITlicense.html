@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MIT License | Invariant Ego, LLC</title>
     <style>
-        /* Import your theme variables */
+      
         :root {
-            /* Light theme colors from your CSS */
+        
             --background: oklch(0.98 0.005 240);
             --foreground: oklch(0.15 0.015 260);
             --card: oklch(1 0 0);
@@ -26,11 +26,11 @@
             --ring: oklch(0.55 0.22 200);
             --radius: 0.75rem;
             
-            /* Gradients */
+         
             --gradient-subtle: linear-gradient(135deg, oklch(0.99 0.005 240) 0%, oklch(0.97 0.008 220) 100%);
             --gradient-card: linear-gradient(to bottom, oklch(1 0 0) 0%, oklch(0.995 0.002 240) 100%);
             
-            /* Shadows */
+         
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
             --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
             --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
@@ -38,7 +38,7 @@
         }
 
         .dark {
-            /* Dark theme colors from your CSS */
+         
             --background: oklch(0.11 0.015 260);
             --foreground: oklch(0.96 0.005 240);
             --card: oklch(0.15 0.018 260);
@@ -55,11 +55,11 @@
             --input: oklch(0.2 0.02 260);
             --ring: oklch(0.65 0.22 200);
             
-            /* Dark gradients */
+          
             --gradient-subtle: linear-gradient(135deg, oklch(0.12 0.016 260) 0%, oklch(0.14 0.018 250) 100%);
             --gradient-card: linear-gradient(to bottom, oklch(0.15 0.018 260) 0%, oklch(0.14 0.017 260) 100%);
             
-            /* Dark shadows */
+        
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
             --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
             --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.4);
@@ -268,18 +268,18 @@
             vertical-align: middle;
         }
         
-        /* Smooth scrolling */
+   
         html {
             scroll-behavior: smooth;
         }
         
-        /* Better selection colors */
+    
         ::selection {
             background-color: color-mix(in oklch, var(--primary) 20%, transparent);
             color: inherit;
         }
         
-        /* Enhanced focus styles for accessibility */
+    
         :focus-visible {
             outline: 2px solid var(--ring);
             outline-offset: 2px;
@@ -352,7 +352,7 @@
             animation: fade-in 0.3s ease-out;
         }
         
-        /* Decorative elements with theme colors */
+       
         .decorative-corner {
             position: fixed;
             width: 300px;
@@ -493,13 +493,13 @@ SOFTWARE.
     </div>
 
     <script>
-        // Set current year automatically in multiple places
+  
         const currentYear = new Date().getFullYear();
         document.getElementById('current-year').textContent = currentYear;
         document.getElementById('license-year').textContent = currentYear;
         document.getElementById('footer-year').textContent = currentYear;
         
-        // Optional: Add print functionality
+     
         document.addEventListener('keydown', function(e) {
             if (e.ctrlKey && e.key === 'p') {
                 e.preventDefault();
