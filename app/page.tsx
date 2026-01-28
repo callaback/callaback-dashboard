@@ -135,6 +135,14 @@ export default function DashboardPage() {
     return () => clearInterval(timer)
   }, [])
 
+  // Load dark mode preference
+  useEffect(() => {
+    const saved = localStorage.getItem("dark_mode")
+    if (saved !== null) {
+      setIsDarkMode(JSON.parse(saved))
+    }
+  }, [])
+
   // Apply dark mode
   useEffect(() => {
     if (isDarkMode) {
@@ -142,6 +150,7 @@ export default function DashboardPage() {
     } else {
       document.documentElement.classList.remove('dark')
     }
+    localStorage.setItem("dark_mode", JSON.stringify(isDarkMode))
   }, [isDarkMode])
 
   // Show welcome toast when user is set
