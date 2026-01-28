@@ -129,6 +129,7 @@ export default function DashboardPage() {
   const [pdfInput, setPdfInput] = useState("")
   const [isPdfLoading, setIsPdfLoading] = useState(false)
   const [generatedPdfUrl, setGeneratedPdfUrl] = useState<string | null>(null)
+  const [pdfError, setPdfError] = useState<string | null>(null)
 
   // Update clock every second
   useEffect(() => {
@@ -471,6 +472,7 @@ export default function DashboardPage() {
     if (!pdfInput.trim()) return
 
     setIsPdfLoading(true)
+    setPdfError(null)
     try {
       const input = pdfInput.trim()
       let url = input
@@ -494,7 +496,10 @@ export default function DashboardPage() {
 
       const response = await fetch(`https://browser-worker.callaback.workers.dev/?${params.toString()}`)
       
-      if (!response.ok) throw new Error(`Failed to generate PDF: ${response.statusText}`)
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(`Worker error: ${response.status} - ${errorText || response.statusText}`)
+      }
 
       const blob = await response.blob()
       const pdfUrl = URL.createObjectURL(blob)
@@ -509,8 +514,10 @@ export default function DashboardPage() {
       toast.success("PDF generated and downloaded")
       setPdfInput("")
     } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : "Unknown error"
       console.error("Error generating PDF:", error)
-      toast.error(`Failed to generate PDF: ${error instanceof Error ? error.message : "Unknown error"}`)
+      setPdfError(errorMsg)
+      toast.error(`Failed to generate PDF: ${errorMsg}`)
     } finally {
       setIsPdfLoading(false)
     }
@@ -731,6 +738,26 @@ export default function DashboardPage() {
         {isPdfLoading && (
           <div className="mb-4 w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1 overflow-hidden">
             <div className="h-full bg-primary animate-pulse" style={{ width: "100%" }} />
+          </div>
+        )}
+        
+        {/* Error Alert */}
+        {pdfError && (
+          <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex-1">
+                <p className="text-sm font-medium text-red-800 dark:text-red-200">PDF Generation Error</p>
+                <p className="text-xs text-red-700 dark:text-red-300 mt-1 break-words">{pdfError}</p>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-5 w-5 flex-shrink-0"
+                onClick={() => setPdfError(null)}
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            </div>
           </div>
         )}
 
