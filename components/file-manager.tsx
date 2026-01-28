@@ -26,13 +26,47 @@ export function FileManager() {
   const uploadFile = useCallback(async (file: File) => {
     setUploading(true)
     try {
-      const url = URL.createObjectURL(file)
-      
+      let url = URL.createObjectURL(file)
+      let name = file.name
+      let type = file.type
+
+      // Convert image to PDF
+      if (file.type.startsWith("image/")) {
+        const canvas = document.createElement("canvas")
+        const img = new Image()
+        
+        img.onload = () => {
+          canvas.width = img.width
+          canvas.height = img.height
+          const ctx = canvas.getContext("2d")
+          if (ctx) {
+            ctx.drawImage(img, 0, 0)
+            canvas.toBlob((blob) => {
+              if (blob) {
+                const pdfUrl = URL.createObjectURL(blob)
+                const newFile: LocalFile = {
+                  id: Date.now().toString(),
+                  name: file.name.replace(/\.[^/.]+$/, ".pdf"),
+                  size: blob.size,
+                  type: "application/pdf",
+                  url: pdfUrl,
+                  createdAt: new Date()
+                }
+                setFiles(prev => [newFile, ...prev])
+                toast.success(`Image converted to PDF: ${newFile.name}`)
+              }
+            }, "application/pdf")
+          }
+        }
+        img.src = url
+        return
+      }
+
       const newFile: LocalFile = {
         id: Date.now().toString(),
-        name: file.name,
+        name: name,
         size: file.size,
-        type: file.type,
+        type: type,
         url: url,
         createdAt: new Date()
       }
