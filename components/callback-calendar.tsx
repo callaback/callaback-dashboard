@@ -4,9 +4,7 @@ import { useState, useEffect } from "react"
 import { ChevronLeft, ChevronRight, Phone, Clock, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { toast } from "sonner"
-import { createClient } from "@/lib/supabase/client"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface Booking {
   id: string
@@ -141,6 +139,8 @@ export function CallbackCalendar() {
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col gap-3 overflow-hidden">
+        <ScrollArea className="flex-1">
+          <div className="pr-4">
         {/* Calendar */}
         <div className="border rounded-lg p-3 bg-slate-50 dark:bg-slate-800 dark:border-slate-700">
           {/* Month Navigation */}
@@ -291,7 +291,7 @@ export function CallbackCalendar() {
               <p className="text-xs text-muted-foreground dark:text-slate-400 text-center py-4">No upcoming bookings</p>
             )}
           </div>
-        </div>
+        </ScrollArea>
       </CardContent>
     </Card>
   )
