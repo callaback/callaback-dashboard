@@ -66,7 +66,6 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
         const { data, error } = await supabase
           .from('chat_messages')
           .select('*')
-          .eq('session_id', sessionId)
           .order('created_at', { ascending: true })
 
         if (error) throw error
@@ -93,16 +92,15 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
 
     loadMessages()
 
-    // Subscribe to realtime updates
+    // Subscribe to realtime updates for all messages
     const subscription = supabase
-      .channel(`chat:${sessionId}`)
+      .channel('chat:broadcast')
       .on(
         'postgres_changes',
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'chat_messages',
-          filter: `session_id=eq.${sessionId}`
+          table: 'chat_messages'
         },
         (payload: any) => {
           const newMsg = {
@@ -127,7 +125,7 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
     return () => {
       subscription.unsubscribe()
     }
-  }, [sessionId, activeTab])
+  }, [activeTab])
 
   // Fetch SMS messages (fallback for SMS tab)
   async function fetchSMSMessages() {
