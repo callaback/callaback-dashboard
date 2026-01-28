@@ -80,7 +80,7 @@ interface Note {
   contact_id?: string
   lead_id?: string
   content: string
-  type: "lead_comment" | "follow_up" | "internal" | "customer_info"
+  type: "note" | "task" | "appointment" | "lead"
   created_by?: string
   created_at: string
   contacts?: {
@@ -99,7 +99,7 @@ export function NotesLeadsPanel() {
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null)
   const [newNote, setNewNote] = useState({
     content: "",
-    type: "lead_comment" as Note["type"],
+    type: "note" as Note["type"],
     lead_id: "",
   })
   const [leadFilter, setLeadFilter] = useState("all")
@@ -208,28 +208,20 @@ export function NotesLeadsPanel() {
 
     try {
       const { error } = await supabase
-        .from("notes")
+        .from("leads")
         .insert({
-          content: newNote.content,
+          title: newNote.content.substring(0, 50) + (newNote.content.length > 50 ? '...' : ''),
+          description: newNote.content,
           type: newNote.type,
-          lead_id: selectedLeadId || undefined,
+          contact_id: selectedLeadId || undefined,
+          status: "new",
+          priority: "medium",
           created_at: new Date().toISOString(),
         })
 
       if (error) throw error
 
-      // If note is added to a lead, update lead's last interaction
-      if (selectedLeadId) {
-        await supabase
-          .from("leads")
-          .update({
-            last_interaction_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", selectedLeadId)
-      }
-
-      setNewNote({ content: "", type: "lead_comment", lead_id: "" })
+      setNewNote({ content: "", type: "note", lead_id: "" })
       setSelectedLeadId(null)
       setIsAddingNote(false)
       fetchData()
@@ -455,7 +447,7 @@ export function NotesLeadsPanel() {
                 variant="ghost"
                 onClick={() => {
                   setIsAddingNote(false)
-                  setNewNote({ content: "", type: "lead_comment", lead_id: "" })
+                  setNewNote({ content: "", type: "note", lead_id: "" })
                   setSelectedLeadId(null)
                 }}
               >
@@ -472,10 +464,10 @@ export function NotesLeadsPanel() {
                   <SelectValue placeholder="Type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="lead_comment">Lead Comment</SelectItem>
-                  <SelectItem value="follow_up">Follow-up Note</SelectItem>
-                  <SelectItem value="customer_info">Customer Info</SelectItem>
-                  <SelectItem value="internal">Internal Note</SelectItem>
+                  <SelectItem value="note">Note</SelectItem>
+                  <SelectItem value="task">Task</SelectItem>
+                  <SelectItem value="appointment">Appointment</SelectItem>
+                  <SelectItem value="lead">Lead</SelectItem>
                 </SelectContent>
               </Select>
               
@@ -521,7 +513,7 @@ export function NotesLeadsPanel() {
                 variant="outline" 
                 onClick={() => {
                   setIsAddingNote(false)
-                  setNewNote({ content: "", type: "lead_comment", lead_id: "" })
+                  setNewNote({ content: "", type: "note", lead_id: "" })
                   setSelectedLeadId(null)
                 }}
               >

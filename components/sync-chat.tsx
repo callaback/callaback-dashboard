@@ -85,6 +85,10 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
           const script = document.createElement('script')
           script.src = 'https://sdk.twilio.com/js/sync/releases/3.0.0/twilio-sync.min.js'
           script.onload = () => initializeSyncClient(token)
+          script.onerror = () => {
+            console.error('Failed to load Twilio SDK')
+            setConnectionStatus('disconnected')
+          }
           document.head.appendChild(script)
         } else {
           initializeSyncClient(token)
@@ -101,11 +105,28 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
         setSyncClient(client)
         
         client.on('connectionStateChanged', (state: string) => {
+          console.log('Sync connection state:', state)
           setConnectionStatus(state === 'connected' ? 'connected' : 'disconnected')
+        })
+
+        client.on('tokenAboutToExpire', async () => {
+          console.log('Token about to expire, refreshing...')
+          try {
+            const response = await fetch('/api/twilio/token', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ identity })
+            })
+            const { token: newToken } = await response.json()
+            client.updateToken(newToken)
+          } catch (error) {
+            console.error('Failed to refresh token:', error)
+          }
         })
 
         // Open or create sync document for this session
         const docName = `chat-${sessionId}`
+        console.log('Opening sync document:', docName)
         const document = await client.document(docName)
         setSyncDocument(document)
         
@@ -116,6 +137,7 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
         
         // Listen for updates
         document.on('updated', (event: any) => {
+          console.log('Document updated:', event.value)
           const { messages: newMessages, participants: newParticipants } = event.value
           setMessages(newMessages || [])
           setParticipants(newParticipants || [identity])
@@ -188,7 +210,10 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
 
   // Send message via Twilio Sync
   const sendSyncMessage = async (message: string) => {
-    if (!syncDocument) return
+    if (!syncDocument) {
+      console.error('No sync document available')
+      return
+    }
 
     const newMsg: Message = {
       id: `${Date.now()}-${Math.random()}`,
@@ -200,6 +225,7 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
     }
 
     try {
+      console.log('Sending sync message:', newMsg)
       const currentData = syncDocument.value || { messages: [], participants: [identity] }
       const updatedMessages = [...(currentData.messages || []), newMsg]
       const updatedParticipants = [...new Set([...(currentData.participants || []), identity])]
@@ -209,6 +235,7 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
         participants: updatedParticipants
       })
       
+      console.log('Message sent successfully')
       setNewMessage("")
     } catch (error) {
       console.error('Failed to send message:', error)
