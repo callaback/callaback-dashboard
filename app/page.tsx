@@ -7,7 +7,7 @@ import {
   ChevronRight, BarChart3, Calendar, Mail, Filter, Download, PhoneCall,
   PhoneIncoming, PhoneOutgoing, PhoneMissed, Voicemail, Copy, Check,
   LogOut, User, Clock, Mic, MicOff, Volume2, VolumeX, Delete, Keyboard,
-  Moon, Sun
+  Moon, Sun, X
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -126,6 +126,9 @@ export default function DashboardPage() {
   const [showFullDialer, setShowFullDialer] = useState(false)
   const [hasShownWelcome, setHasShownWelcome] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(false)
+  const [pdfInput, setPdfInput] = useState("")
+  const [isPdfLoading, setIsPdfLoading] = useState(false)
+  const [generatedPdfUrl, setGeneratedPdfUrl] = useState<string | null>(null)
 
   // Update clock every second
   useEffect(() => {
@@ -464,6 +467,45 @@ export default function DashboardPage() {
     setSearchQuery(query)
   }, 300)
 
+  const handleGeneratePdf = async () => {
+    if (!pdfInput.trim()) return
+
+    setIsPdfLoading(true)
+    try {
+      const input = pdfInput.trim()
+      const isUrl = input.startsWith("http://") || input.startsWith("https://")
+      
+      const params = new URLSearchParams()
+      if (isUrl) {
+        params.append("url", input)
+      } else {
+        params.append("name", input)
+      }
+
+      const response = await fetch(`https://browser-worker.callaback.workers.dev/?${params.toString()}`)
+      
+      if (!response.ok) throw new Error("Failed to generate PDF")
+
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
+      setGeneratedPdfUrl(url)
+      
+      // Auto-download
+      const a = document.createElement("a")
+      a.href = url
+      a.download = `${input.replace(/[^a-z0-9]/gi, "_")}.pdf`
+      a.click()
+      
+      toast.success("PDF generated and downloaded")
+      setPdfInput("")
+    } catch (error) {
+      console.error("Error generating PDF:", error)
+      toast.error("Failed to generate PDF")
+    } finally {
+      setIsPdfLoading(false)
+    }
+  }
+
   // FIXED LOGOUT HANDLER
   const handleLogout = async () => {
     try {
@@ -652,17 +694,39 @@ export default function DashboardPage() {
 
       {/* Main Content */}
       <main className="max-w-[2000px] mx-auto p-4 pb-8 w-full">
-        {/* Time Range Selector */}
-        <div className="mb-4">
-          <Tabs value={timeRange} onValueChange={setTimeRange} className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="today" className="text-xs">Today</TabsTrigger>
-              <TabsTrigger value="yesterday" className="text-xs">Yesterday</TabsTrigger>
-              <TabsTrigger value="week" className="text-xs">Week</TabsTrigger>
-              <TabsTrigger value="month" className="text-xs">Month</TabsTrigger>
-              <TabsTrigger value="all" className="text-xs">All</TabsTrigger>
-            </TabsList>
-          </Tabs>
+        {/* Time Range Selector + PDF Generator */}
+        <div className="mb-4 flex gap-3 items-end">
+          <div className="flex-1">
+            <Tabs value={timeRange} onValueChange={setTimeRange} className="w-full">
+              <TabsList className="grid w-full grid-cols-5">
+                <TabsTrigger value="today" className="text-xs">Today</TabsTrigger>
+                <TabsTrigger value="yesterday" className="text-xs">Yesterday</TabsTrigger>
+                <TabsTrigger value="week" className="text-xs">Week</TabsTrigger>
+                <TabsTrigger value="month" className="text-xs">Month</TabsTrigger>
+                <TabsTrigger value="all" className="text-xs">All</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+          
+          {/* PDF Generator */}
+          <div className="flex gap-2 items-end">
+            <div className="flex gap-2 flex-1 min-w-[300px]">
+              <Input
+                placeholder="Name or URL"
+                value={pdfInput}
+                onChange={(e) => setPdfInput(e.target.value)}
+                className="text-sm"
+              />
+              <Button
+                size="sm"
+                onClick={handleGeneratePdf}
+                disabled={!pdfInput.trim() || isPdfLoading}
+                className="whitespace-nowrap"
+              >
+                {isPdfLoading ? "Generating..." : "Generate PDF"}
+              </Button>
+            </div>
+          </div>
         </div>
 
         {/* Metrics Grid - Top Overview */}
@@ -851,8 +915,45 @@ export default function DashboardPage() {
             </Card>
             
             {/* File Manager - Takes remaining space */}
-            <div className="h-[450px]">
-              <FileManager />
+            <div className="h-[450px] flex flex-col gap-2">
+              {generatedPdfUrl && (
+                <Card className="flex-shrink-0">
+                  <CardHeader className="pb-2 px-4 pt-4">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-sm">Generated PDF</CardTitle>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() => setGeneratedPdfUrl(null)}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-4 pt-0">
+                    <iframe
+                      src={generatedPdfUrl}
+                      className="w-full h-[200px] border rounded"
+                    />
+                    <Button
+                      size="sm"
+                      className="w-full mt-2"
+                      onClick={() => {
+                        const a = document.createElement("a")
+                        a.href = generatedPdfUrl
+                        a.download = "generated.pdf"
+                        a.click()
+                      }}
+                    >
+                      Download PDF
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+              <div className={generatedPdfUrl ? "h-[250px]" : "h-full"}>
+                <FileManager />
+              </div>
             </div>
           </div>
 
