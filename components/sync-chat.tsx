@@ -438,7 +438,6 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
             onClick={handleSend} 
             disabled={!newMessage.trim()}
           >
-          >
             <Send className="h-4 w-4" />
           </Button>
         </div>
