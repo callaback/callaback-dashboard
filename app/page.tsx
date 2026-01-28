@@ -1047,13 +1047,13 @@ export default function DashboardPage() {
 
           {/* RIGHT COLUMN - Callback Calendar + Notes */}
           <div className="lg:col-span-4 flex flex-col gap-3">
-            {/* Callback Calendar - Fixed height */}
-            <div className="h-[380px]">
+            {/* Callback Calendar - Takes more space */}
+            <div className="h-[550px]">
               <CallbackCalendar />
             </div>
             
             {/* Notes/Leads Panel - Takes remaining space */}
-            <div className="h-[650px]">
+            <div className="h-[480px]">
               <NotesLeadsPanel />
             </div>
           </div>

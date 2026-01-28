@@ -142,7 +142,7 @@ export function FileManager() {
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-semibold flex items-center gap-2">
             <Upload className="h-5 w-5" />
-            File Manager
+            PDF Dropzone
           </CardTitle>
           <div className="text-xs text-muted-foreground">
             {files.length} file{files.length !== 1 ? 's' : ''}
@@ -188,7 +188,7 @@ export function FileManager() {
             </div>
             <div>
               <p className="font-semibold text-sm">
-                {uploading ? "Adding..." : isDragging ? "Drop files here" : "Drop or click to add files"}
+                {uploading ? "Adding..." : isDragging ? "Drop files here" : "drop an image to convert pdf"}
               </p>
               <p className="text-xs text-muted-foreground mt-0.5">
                 Images, documents, videos & more
