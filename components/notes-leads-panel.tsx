@@ -411,11 +411,11 @@ export function NotesLeadsPanel() {
             </div>
             <Button
               size="sm"
-              variant="default"
-              onClick={() => setIsAddingNote(true)}
+              variant={isAddingNote ? "secondary" : "default"}
+              onClick={() => setIsAddingNote(!isAddingNote)}
             >
               <Plus className="h-4 w-4" />
-              Add Note
+              {isAddingNote ? "Hide Form" : "Add Note"}
             </Button>
           </div>
         </div>
@@ -446,8 +446,23 @@ export function NotesLeadsPanel() {
 
       <CardContent className="flex-1 overflow-hidden">
         {/* Add Note Form */}
-        {isAddingNote && (
-          <div className="bg-secondary/50 rounded-lg p-3 mb-3 space-y-2">
+        <div className="bg-secondary/50 rounded-lg p-3 mb-3 space-y-2">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm font-medium">Add New Note</span>
+            {isAddingNote && (
+              <Button 
+                size="sm" 
+                variant="ghost"
+                onClick={() => {
+                  setIsAddingNote(false)
+                  setNewNote({ content: "", type: "lead_comment", lead_id: "" })
+                  setSelectedLeadId(null)
+                }}
+              >
+                ×
+              </Button>
+            )}
+          </div>
             <div className="flex gap-2">
               <Select
                 value={newNote.type}
@@ -514,7 +529,7 @@ export function NotesLeadsPanel() {
               </Button>
             </div>
           </div>
-        )}
+        }
 
         {/* Leads List */}
         <ScrollArea className="h-[calc(100%-1rem)]">
