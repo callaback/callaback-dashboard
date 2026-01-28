@@ -473,26 +473,36 @@ export default function DashboardPage() {
     setIsPdfLoading(true)
     try {
       const input = pdfInput.trim()
-      const isUrl = input.startsWith("http://") || input.startsWith("https://")
+      let url = input
+
+      // If it looks like a domain without protocol, add https://
+      if (!input.startsWith("http://") && !input.startsWith("https://")) {
+        // Check if it's a URL-like string (has dots) or a name
+        if (input.includes(".")) {
+          url = `https://${input}`
+        }
+      }
+
+      const isUrl = url.startsWith("http://") || url.startsWith("https://")
       
       const params = new URLSearchParams()
       if (isUrl) {
-        params.append("url", input)
+        params.append("url", url)
       } else {
         params.append("name", input)
       }
 
       const response = await fetch(`https://browser-worker.callaback.workers.dev/?${params.toString()}`)
       
-      if (!response.ok) throw new Error("Failed to generate PDF")
+      if (!response.ok) throw new Error(`Failed to generate PDF: ${response.statusText}`)
 
       const blob = await response.blob()
-      const url = URL.createObjectURL(blob)
-      setGeneratedPdfUrl(url)
+      const pdfUrl = URL.createObjectURL(blob)
+      setGeneratedPdfUrl(pdfUrl)
       
       // Auto-download
       const a = document.createElement("a")
-      a.href = url
+      a.href = pdfUrl
       a.download = `${input.replace(/[^a-z0-9]/gi, "_")}.pdf`
       a.click()
       
@@ -500,7 +510,7 @@ export default function DashboardPage() {
       setPdfInput("")
     } catch (error) {
       console.error("Error generating PDF:", error)
-      toast.error("Failed to generate PDF")
+      toast.error(`Failed to generate PDF: ${error instanceof Error ? error.message : "Unknown error"}`)
     } finally {
       setIsPdfLoading(false)
     }
@@ -697,9 +707,11 @@ export default function DashboardPage() {
         {/* PDF Generator */}
         <div className="mb-4 flex gap-2 items-center">
           <Input
-            placeholder="Name or URL"
+            placeholder="Name or URL (e.g., example.com)"
             value={pdfInput}
             onChange={(e) => setPdfInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleGeneratePdf()}
+            disabled={isPdfLoading}
             className="text-sm flex-1"
           />
           <Button
@@ -711,6 +723,13 @@ export default function DashboardPage() {
             {isPdfLoading ? "Generating..." : "Generate PDF"}
           </Button>
         </div>
+        
+        {/* Progress Bar */}
+        {isPdfLoading && (
+          <div className="mb-4 w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1 overflow-hidden">
+            <div className="h-full bg-primary animate-pulse" style={{ width: "100%" }} />
+          </div>
+        )}
 
         {/* Metrics Grid - Top Overview */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
