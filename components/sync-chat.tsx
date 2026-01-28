@@ -10,13 +10,6 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { createClient } from "@/lib/supabase/client"
 
-// Import Twilio Sync
-declare global {
-  interface Window {
-    Twilio: any;
-  }
-}
-
 interface Message {
   id: string
   sender_identity: string
@@ -48,15 +41,11 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
   const [tempSessionId, setTempSessionId] = useState(sessionId)
   const [isLoading, setIsLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'chat' | 'sms'>('chat')
-  const [syncClient, setSyncClient] = useState<any>(null)
-  const [syncDocument, setSyncDocument] = useState<any>(null)
-  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected'>('connecting')
   const scrollRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   
   const supabase = createClient()
 
-  // Auto-scroll to bottom
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }
@@ -65,121 +54,80 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
     scrollToBottom()
   }, [messages])
 
-  // Initialize Twilio Sync
+  // Load initial messages and subscribe to realtime
   useEffect(() => {
-    const initializeSync = async () => {
-      try {
-        // Get Twilio token from your API
-        const response = await fetch('/api/twilio/token', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ identity })
-        })
-        
-        if (!response.ok) throw new Error('Failed to get token')
-        
-        const { token } = await response.json()
-        
-        // Load Twilio SDK if not already loaded
-        if (!window.Twilio) {
-          const script = document.createElement('script')
-          script.src = 'https://sdk.twilio.com/js/sync/releases/3.0.0/twilio-sync.min.js'
-          script.async = true
-          script.onload = () => {
-            if (window.Twilio?.Sync?.Client) {
-              initializeSyncClient(token)
-            } else {
-              throw new Error('Twilio Sync not available after loading')
-            }
-          }
-          script.onerror = () => {
-            console.error('Failed to load Twilio SDK')
-            setConnectionStatus('disconnected')
-            setIsLoading(false)
-          }
-          document.head.appendChild(script)
-        } else if (window.Twilio?.Sync?.Client) {
-          initializeSyncClient(token)
-        } else {
-          throw new Error('Twilio Sync not available')
-        }
-      } catch (error) {
-        console.error('Failed to initialize Sync:', error)
-        setConnectionStatus('disconnected')
-        setIsLoading(false)
-      }
-    }
-
-    const initializeSyncClient = async (token: string) => {
-      try {
-        const client = new window.Twilio.Sync.Client(token)
-        setSyncClient(client)
-        
-        client.on('connectionStateChanged', (state: string) => {
-          console.log('Sync connection state:', state)
-          setConnectionStatus(state === 'connected' ? 'connected' : 'disconnected')
-        })
-
-        client.on('tokenAboutToExpire', async () => {
-          console.log('Token about to expire, refreshing...')
-          try {
-            const response = await fetch('/api/twilio/token', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ identity })
-            })
-            const { token: newToken } = await response.json()
-            client.updateToken(newToken)
-          } catch (error) {
-            console.error('Failed to refresh token:', error)
-          }
-        })
-
-        // Open or create sync document for this session
-        const docName = `chat-${sessionId}`
-        console.log('Opening sync document:', docName)
-        const document = await client.document(docName)
-        setSyncDocument(document)
-        
-        // Load existing messages
-        const data = document.value || { messages: [], participants: [identity] }
-        setMessages(data.messages || [])
-        setParticipants(data.participants || [identity])
-        
-        // Listen for updates
-        document.on('updated', (event: any) => {
-          console.log('Document updated:', event.value)
-          const { messages: newMessages, participants: newParticipants } = event.value
-          setMessages(newMessages || [])
-          setParticipants(newParticipants || [identity])
-        })
-        
-        setConnectionStatus('connected')
-        setIsLoading(false)
-        
-      } catch (error) {
-        console.error('Sync client error:', error)
-        setConnectionStatus('disconnected')
-        setIsLoading(false)
-      }
-    }
-
-    if (activeTab === 'chat') {
-      initializeSync()
-    } else {
+    if (activeTab === 'sms') {
       fetchSMSMessages()
+      return
     }
+
+    const loadMessages = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('chat_messages')
+          .select('*')
+          .eq('session_id', sessionId)
+          .order('created_at', { ascending: true })
+
+        if (error) throw error
+        
+        const formattedMessages = data?.map((msg: any) => ({
+          id: msg.id,
+          sender_identity: msg.sender_identity,
+          message: msg.message,
+          created_at: msg.created_at,
+          session_id: msg.session_id,
+          source: 'chat'
+        })) || []
+        
+        setMessages(formattedMessages)
+        
+        const uniqueParticipants = [...new Set(formattedMessages.map(m => m.sender_identity))]
+        setParticipants([...uniqueParticipants, identity])
+        setIsLoading(false)
+      } catch (error) {
+        console.error('Failed to load messages:', error)
+        setIsLoading(false)
+      }
+    }
+
+    loadMessages()
+
+    // Subscribe to realtime updates
+    const subscription = supabase
+      .channel(`chat:${sessionId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'chat_messages',
+          filter: `session_id=eq.${sessionId}`
+        },
+        (payload: any) => {
+          const newMsg = {
+            id: payload.new.id,
+            sender_identity: payload.new.sender_identity,
+            message: payload.new.message,
+            created_at: payload.new.created_at,
+            session_id: payload.new.session_id,
+            source: 'chat'
+          }
+          setMessages(prev => [...prev, newMsg])
+          
+          setParticipants(prev => {
+            const updated = new Set(prev)
+            updated.add(payload.new.sender_identity)
+            return Array.from(updated)
+          })
+        }
+      )
+      .subscribe()
 
     return () => {
-      if (syncClient) {
-        try {
-          syncClient.shutdown()
-        } catch (e) {
-          console.error('Error shutting down sync client:', e)
-        }
-      }
+      subscription.unsubscribe()
     }
-  }, [sessionId, identity, activeTab])
+  }, [sessionId, activeTab])
 
   // Fetch SMS messages (fallback for SMS tab)
   async function fetchSMSMessages() {
@@ -223,34 +171,21 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
     setIsLoading(false)
   }
 
-  // Send message via Twilio Sync
-  const sendSyncMessage = async (message: string) => {
-    if (!syncDocument) {
-      console.error('No sync document available')
-      return
-    }
-
-    const newMsg: Message = {
-      id: `${Date.now()}-${Math.random()}`,
-      sender_identity: identity,
-      message: message.trim(),
-      created_at: new Date().toISOString(),
-      session_id: sessionId,
-      source: 'chat'
-    }
+  // Send message via Supabase
+  const sendMessage = async (message: string) => {
+    if (!message.trim()) return
 
     try {
-      console.log('Sending sync message:', newMsg)
-      const currentData = syncDocument.value || { messages: [], participants: [identity] }
-      const updatedMessages = [...(currentData.messages || []), newMsg]
-      const updatedParticipants = [...new Set([...(currentData.participants || []), identity])]
-      
-      await syncDocument.set({
-        messages: updatedMessages,
-        participants: updatedParticipants
-      })
-      
-      console.log('Message sent successfully')
+      const { error } = await supabase
+        .from('chat_messages')
+        .insert({
+          sender_identity: identity,
+          message: message.trim(),
+          session_id: sessionId,
+          created_at: new Date().toISOString()
+        })
+
+      if (error) throw error
       setNewMessage("")
     } catch (error) {
       console.error('Failed to send message:', error)
@@ -292,7 +227,7 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
         alert("Please select a recipient for SMS")
       }
     } else {
-      await sendSyncMessage(newMessage)
+      await sendMessage(newMessage.trim())
     }
   }
 
@@ -313,21 +248,6 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
     return new Date(dateStr).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
   }
 
-  const getConnectionBadge = () => {
-    const colors = {
-      connecting: 'bg-yellow-500',
-      connected: 'bg-green-500',
-      disconnected: 'bg-red-500'
-    }
-    
-    return (
-      <div className="flex items-center gap-1">
-        <div className={`w-2 h-2 rounded-full ${colors[connectionStatus]}`} />
-        <span className="text-xs capitalize">{connectionStatus}</span>
-      </div>
-    )
-  }
-
   return (
     <Card className="h-full flex flex-col">
       <CardHeader className="pb-3 shrink-0">
@@ -337,7 +257,6 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
             Sync Chat
           </CardTitle>
           <div className="flex items-center gap-2">
-            {activeTab === 'chat' && getConnectionBadge()}
             <Badge variant="outline" className="gap-1">
               <Users className="h-3 w-3" />
               {participants.length}
