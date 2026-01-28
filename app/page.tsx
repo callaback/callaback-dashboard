@@ -919,7 +919,7 @@ export default function DashboardPage() {
             </Card>
             
             {/* File Manager - Takes remaining space */}
-            <div className="h-[450px] flex flex-col gap-2">
+            <div className="h-[600px] flex flex-col gap-2">
               {generatedPdfUrl && (
                 <Card className="flex-shrink-0">
                   <CardHeader className="pb-2 px-4 pt-4">
@@ -955,7 +955,7 @@ export default function DashboardPage() {
                   </CardContent>
                 </Card>
               )}
-              <div className={generatedPdfUrl ? "h-[250px]" : "h-full"}>
+              <div className={generatedPdfUrl ? "h-[350px]" : "h-full"}>
                 <FileManager />
               </div>
             </div>
