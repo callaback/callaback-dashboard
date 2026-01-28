@@ -210,7 +210,6 @@ export default function DashboardPage() {
         } else if (event === 'SIGNED_IN' && session) {
           console.log("User signed in:", session.user.email)
           setUser(session.user)
-          fetchDashboardData()
         }
       }
     )
