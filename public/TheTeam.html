@@ -540,7 +540,7 @@
         
         <main class="content animate-fade-in">
             <div class="team-intro animate-fade-in-up delay-100">
-                <h2 style="margin-top: 0; border-bottom: none; padding-bottom: 0;">1.1 The Core Team</h2>
+                <h2 style="margin-top: 0; border-bottom: none; padding-bottom: 0;">The Core Team</h2>
                 <p style="margin-bottom: 0; color: var(--muted-foreground);">
                     As of 15 January 2026
                 </p>
@@ -643,38 +643,10 @@
                 </div>
             </div>
             
-            <div class="product-section animate-fade-in-up delay-300">
-                <h2 class="product-title">What Callaback Is (in plain English)</h2>
-                <p style="font-size: 1.2rem; line-height: 1.8; margin-bottom: 1.5rem;">
-                    Callaback is a system and service created with networking and web technologies, rooted in AI and years of IT experience, that sits between a business's public phone system and its team.
-                </p>
-                
-                <h3 style="margin-top: 2rem; color: var(--foreground);">A Problem It Solves</h3>
-                <p style="margin-bottom: 1rem;">
-                    Service businesses lose money when:
-                </p>
-                <ul class="problem-list">
-                    <li>Techs are on jobs</li>
-                    <li>The office is busy</li>
-                    <li>It's after hours</li>
-                    <li>Or nobody can grab the phone</li>
-                </ul>
-                <p style="margin-top: 1.5rem; font-style: italic;">
-                    Callaback ensures you never miss an opportunity, capturing every call and converting it into business—no matter where your team is or what time it is.
-                </p>
-            </div>
-            
             <div class="mission-statement animate-fade-in-up delay-400">
                 We're more than just a team—we're a collaborative force dedicated to solving real-world problems with technology that just works.
             </div>
             
-            <h2 class="animate-fade-in-up delay-200">Our Collaborative Approach</h2>
-            <p class="animate-fade-in delay-300">
-                What makes us unique is how we work together. Each of us wears multiple hats, and we constantly cross-pollinate ideas between outreach, engineering, design, and operations. This ensures that Callaback isn't just technically sound—it's also user-friendly, business-smart, and constantly improving.
-            </p>
-            <p class="animate-fade-in delay-400">
-                Notice how each team member lists "customer service & support" and "process improvement" among their roles? That's not a mistake. Every one of us is directly involved with our clients and committed to making Callaback better every single day.
-            </p>
         </main>
         
         <footer class="footer animate-fade-in-up delay-400">
@@ -684,13 +656,13 @@
     </div>
 
     <script>
-        // Set current year automatically
+     
         const currentYear = new Date().getFullYear();
         document.querySelectorAll('#current-year').forEach(el => {
             el.textContent = currentYear;
         });
         
-        // Add scroll-triggered animations
+ 
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
@@ -704,7 +676,7 @@
             });
         }, observerOptions);
         
-        // Observe elements for scroll animation
+   
         document.querySelectorAll('h2, h3, p, .team-card, .product-section').forEach(el => {
             observer.observe(el);
         });
