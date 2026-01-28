@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invariant Ego LLC | Building Software That Works</title>
+    <style>
+        /* Import your theme variables */
+        :root {
+            /* Light theme colors from your CSS */
+            --background: oklch(0.98 0.005 240);
+            --foreground: oklch(0.15 0.015 260);
+            --card: oklch(1 0 0);
+            --card-foreground: oklch(0.15 0.015 260);
+            --primary: oklch(0.55 0.22 200);
+            --primary-foreground: oklch(0.98 0 0);
+            --secondary: oklch(0.92 0.01 240);
+            --secondary-foreground: oklch(0.15 0.015 260);
+            --muted: oklch(0.94 0.008 240);
+            --muted-foreground: oklch(0.48 0.01 260);
+            --accent: oklch(0.88 0.015 240);
+            --accent-foreground: oklch(0.15 0.015 260);
+            --destructive: oklch(0.58 0.24 25);
+            --border: oklch(0.88 0.01 240);
+            --input: oklch(0.92 0.008 240);
+            --ring: oklch(0.55 0.22 200);
+            --radius: 0.75rem;
+            
+            /* Gradients */
+            --gradient-subtle: linear-gradient(135deg, oklch(0.99 0.005 240) 0%, oklch(0.97 0.008 220) 100%);
+            --gradient-card: linear-gradient(to bottom, oklch(1 0 0) 0%, oklch(0.995 0.002 240) 100%);
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+        }
+
+        .dark {
+            /* Dark theme colors from your CSS */
+            --background: oklch(0.11 0.015 260);
+            --foreground: oklch(0.96 0.005 240);
+            --card: oklch(0.15 0.018 260);
+            --card-foreground: oklch(0.96 0.005 240);
+            --primary: oklch(0.65 0.22 200);
+            --primary-foreground: oklch(0.11 0.015 260);
+            --secondary: oklch(0.2 0.02 260);
+            --secondary-foreground: oklch(0.92 0.005 240);
+            --muted: oklch(0.18 0.018 260);
+            --muted-foreground: oklch(0.62 0.008 240);
+            --accent: oklch(0.22 0.02 260);
+            --destructive: oklch(0.58 0.24 25);
+            --border: oklch(0.25 0.02 260);
+            --input: oklch(0.2 0.02 260);
+            --ring: oklch(0.65 0.22 200);
+            
+            /* Dark gradients */
+            --gradient-subtle: linear-gradient(135deg, oklch(0.12 0.016 260) 0%, oklch(0.14 0.018 250) 100%);
+            --gradient-card: linear-gradient(to bottom, oklch(0.15 0.018 260) 0%, oklch(0.14 0.017 260) 100%);
+            
+            /* Dark shadows */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.6), 0 8px 10px -6px rgb(0 0 0 / 0.4);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: var(--foreground);
+            background: var(--gradient-subtle);
+            min-height: 100vh;
+            padding: 0;
+            font-feature-settings: 'rlig' 1, 'calt' 1, 'ss01' 1;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            position: relative;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+        
+        h1 {
+            font-size: 3.2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: var(--foreground);
+            background: linear-gradient(135deg, var(--primary), oklch(0.6 0.2 145));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+        
+        .tagline {
+            color: var(--muted-foreground);
+            font-size: 1.4rem;
+            letter-spacing: 0.5px;
+            margin-top: 0.5rem;
+            font-weight: 400;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.4;
+        }
+        
+        .content {
+            background: var(--gradient-card);
+            backdrop-filter: blur(10px);
+            border-radius: calc(var(--radius) * 1.5);
+            padding: 3rem;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-xl);
+            margin-bottom: 3rem;
+        }
+        
+        h2 {
+            font-size: 2rem;
+            margin: 2.5rem 0 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--primary);
+            color: var(--foreground);
+            position: relative;
+        }
+        
+        h2:first-of-type {
+            margin-top: 0;
+        }
+        
+        h3 {
+            font-size: 1.4rem;
+            margin: 2rem 0 1rem;
+            color: var(--primary);
+        }
+        
+        p {
+            margin-bottom: 1.5rem;
+            color: var(--muted-foreground);
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+        
+        .mission-statement {
+            font-size: 1.2rem;
+            font-style: italic;
+            color: var(--primary);
+            padding: 1.5rem;
+            border-left: 4px solid var(--primary);
+            background-color: color-mix(in oklch, var(--primary) 5%, transparent);
+            border-radius: 0 var(--radius) var(--radius) 0;
+            margin: 2.5rem 0;
+        }
+        
+        .pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .pillar-card {
+            background-color: color-mix(in oklch, var(--primary) 8%, transparent);
+            border-radius: var(--radius);
+            padding: 2rem;
+            border: 1px solid color-mix(in oklch, var(--primary) 20%, transparent);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .pillar-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .pillar-title {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .pillar-title::before {
+            content: '';
+            width: 12px;
+            height: 12px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .expertise-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .expertise-item {
+            background-color: color-mix(in oklch, var(--accent) 10%, transparent);
+            border-radius: calc(var(--radius) * 0.75);
+            padding: 1.2rem;
+            border: 1px solid var(--border);
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+        
+        .expertise-item:hover {
+            background-color: color-mix(in oklch, var(--primary) 15%, transparent);
+            border-color: var(--primary);
+        }
+        
+        .highlight-box {
+            background-color: color-mix(in oklch, var(--primary) 8%, transparent);
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin: 3rem 0;
+            border: 1px solid color-mix(in oklch, var(--primary) 25%, transparent);
+            border-left: 5px solid var(--primary);
+        }
+        
+        .quote {
+            font-style: italic;
+            color: var(--primary);
+            text-align: center;
+            font-size: 1.3rem;
+            padding: 2rem;
+            margin: 3rem 0;
+            position: relative;
+        }
+        
+        .quote::before,
+        .quote::after {
+            content: '"';
+            font-size: 3rem;
+            color: color-mix(in oklch, var(--primary) 40%, transparent);
+            position: absolute;
+            opacity: 0.5;
+        }
+        
+        .quote::before {
+            top: -10px;
+            left: 0;
+        }
+        
+        .quote::after {
+            bottom: -30px;
+            right: 0;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--muted-foreground);
+            font-size: 0.9rem;
+        }
+        
+        .company-name {
+            color: var(--primary);
+            font-weight: 700;
+        }
+        
+        .primary-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            margin: 0 12px;
+            vertical-align: middle;
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Better selection colors */
+        ::selection {
+            background-color: color-mix(in oklch, var(--primary) 20%, transparent);
+            color: inherit;
+        }
+        
+        /* Enhanced focus styles for accessibility */
+        :focus-visible {
+            outline: 2px solid var(--ring);
+            outline-offset: 2px;
+            border-radius: 2px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem 1rem;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .tagline {
+                font-size: 1.2rem;
+            }
+            
+            .content {
+                padding: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.7rem;
+            }
+            
+            .pillars-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .expertise-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .tagline {
+                font-size: 1.1rem;
+            }
+            
+            .content {
+                padding: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .expertise-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Professional animations */
+        @keyframes fade-in-up {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .animate-fade-in-up {
+            animation: fade-in-up 0.6s ease-out;
+        }
+        
+        .animate-fade-in {
+            animation: fade-in 0.4s ease-out;
+        }
+        
+        .delay-100 {
+            animation-delay: 100ms;
+        }
+        
+        .delay-200 {
+            animation-delay: 200ms;
+        }
+        
+        .delay-300 {
+            animation-delay: 300ms;
+        }
+        
+        /* Decorative elements with theme colors */
+        .decorative-corner {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, color-mix(in oklch, var(--background) 70%, transparent) 0%, transparent 70%);
+            z-index: -1;
+        }
+        
+        .top-left {
+            top: -200px;
+            left: -200px;
+        }
+        
+        .bottom-right {
+            bottom: -200px;
+            right: -200px;
+        }
+        
+        .primary-corner {
+            position: fixed;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: radial-gradient(circle, color-mix(in oklch, var(--primary) 15%, transparent) 0%, transparent 70%);
+            z-index: -1;
+        }
+        
+        .top-right {
+            top: -100px;
+            right: -100px;
+        }
+        
+        .bottom-left {
+            bottom: -100px;
+            left: -100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="decorative-corner top-left"></div>
+    <div class="decorative-corner bottom-right"></div>
+    <div class="primary-corner top-right"></div>
+    <div class="primary-corner bottom-left"></div>
+    
+    <div class="container">
+        <header class="header animate-fade-in-up">
+            <h1>Invariant Ego LLC</h1>
+            <div class="tagline">Building software that actually works in the real world</div>
+        </header>
+        
+        <main class="content animate-fade-in">
+            <div class="mission-statement animate-fade-in-up delay-100">
+                We build efficient, durable systems that solve real problems, make life easier, scale with intent, and hold up over time.
+            </div>
+            
+            <h2 class="animate-fade-in-up delay-200">Our Philosophy</h2>
+            <p class="animate-fade-in delay-300">We've spent years engineering systems across industries and complex enterprise environments—where failure is expensive, assumptions get exposed quickly, and theory alone doesn't survive contact with reality.</p>
+            <p class="animate-fade-in delay-300">We don't build throwaway apps, fragile architectures, or "looks-good-in-a-demo" software. With nerd powers combined, we design and engineer systems that withstand real-world pressures.</p>
+            
+            <div class="quote animate-fade-in-up delay-200">
+                Our involvement doesn't end at launch, and we're hard to get rid of unless your project has reached perfection or there's literally nothing else that can be done.
+            </div>
+            
+            <h2 class="animate-fade-in-up delay-100">End-to-End Partnership</h2>
+            <p class="animate-fade-in delay-200">We partner from concept through execution and stay engaged long after deployment. We support products through their full, natural lifecycle as requirements evolve, markets shift, and systems mature.</p>
+            
+            <div class="pillars-grid">
+                <div class="pillar-card animate-fade-in-up delay-200">
+                    <div class="pillar-title">Real-World Engineering</div>
+                    <p>We design for the messy reality of production environments, not just clean development setups. Our systems handle edge cases, scale under pressure, and recover gracefully from failure.</p>
+                </div>
+                
+                <div class="pillar-card animate-fade-in-up delay-300">
+                    <div class="pillar-title">Long-Term Partnership</div>
+                    <p>We stick with you through the entire journey—from initial concept through scaling and evolution. We're invested in your success, not just project completion.</p>
+                </div>
+                
+                <div class="pillar-card animate-fade-in-up delay-400">
+                    <div class="pillar-title">Holistic Perspective</div>
+                    <p>We see the whole board, not just the code. Our approach considers business objectives, user experience, operational realities, and future growth from day one.</p>
+                </div>
+            </div>
+            
+            <h2 class="animate-fade-in-up delay-100">Our Range of Expertise</h2>
+            <p class="animate-fade-in delay-200">What makes us different is our comprehensive range. We bring deep, hands-on experience across all technology-related areas:</p>
+            
+            <div class="expertise-grid animate-fade-in delay-300">
+                <div class="expertise-item">Software Engineering (Full-stack)</div>
+                <div class="expertise-item">Mobile Development</div>
+                <div class="expertise-item">Systems Architecture</div>
+                <div class="expertise-item">Cloud Infrastructure</div>
+                <div class="expertise-item">DevOps & SRE</div>
+                <div class="expertise-item">Cybersecurity</div>
+                <div class="expertise-item">Blockchain & Web3</div>
+                <div class="expertise-item">Hardware Integration</div>
+                <div class="expertise-item">IT Operations</div>
+                <div class="expertise-item">Product Strategy</div>
+                <div class="expertise-item">UX/UI Design</div>
+                <div class="expertise-item">Business Development</div>
+            </div>
+            
+            <div class="highlight-box animate-fade-in-up delay-200">
+                <h3>Seeing the Whole Picture</h3>
+                <p>This comprehensive expertise allows us to understand how every piece fits together. We don't just write code—we build cohesive systems where infrastructure, security, user experience, and business goals align seamlessly.</p>
+            </div>
+            
+            <h2 class="animate-fade-in-up delay-100">Our Core Belief</h2>
+            <p class="animate-fade-in delay-200">We operate on the belief that technology should empower people, not box them in. Whether you're an individual founder, a small team, or a large organization, we help you leverage what you already have, cut through noise, and build systems that actually move the needle, together.</p>
+            
+            <div class="quote animate-fade-in-up delay-300">
+                Invariant Ego isn't about chasing trends. It's about building things that last.
+            </div>
+            
+            <h2 class="animate-fade-in-up delay-100">Who We Work With</h2>
+            <p class="animate-fade-in delay-200">We partner with:</p>
+            <ul style="color: var(--muted-foreground); margin: 1.5rem 0 2.5rem 2rem; line-height: 1.8;">
+                <li class="animate-fade-in delay-300"><strong>Founders & Startups</strong> who need to build their MVP with a solid foundation that can scale</li>
+                <li class="animate-fade-in delay-400"><strong>Established Companies</strong> looking to modernize legacy systems or build new capabilities</li>
+                <li class="animate-fade-in delay-500"><strong>Enterprise Teams</strong> needing expertise in complex, mission-critical environments</li>
+                <li class="animate-fade-in delay-600"><strong>Anyone</strong> tired of software that breaks when real users touch it</li>
+            </ul>
+        </main>
+        
+        <footer class="footer animate-fade-in-up delay-400">
+            <p><span class="primary-dot"></span> <span class="company-name">Invariant Ego LLC</span> — Building software that withstands reality <span class="primary-dot"></span></p>
+            <p style="margin-top: 1rem; font-size: 0.85rem;">© <span id="current-year"></span> Invariant Ego LLC. All technology, all reality, all partnership.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Set current year automatically
+        const currentYear = new Date().getFullYear();
+        document.getElementById('current-year').textContent = currentYear;
+        
+        // Add scroll-triggered animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in-up');
+                }
+            });
+        }, observerOptions);
+        
+        // Observe elements for scroll animation
+        document.querySelectorAll('h2, h3, p, .pillar-card, .expertise-item').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

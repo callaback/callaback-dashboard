@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy | Callaback</title>
+    <style>
+        /* Import your theme variables */
+        :root {
+            /* Light theme colors from your CSS */
+            --background: oklch(0.98 0.005 240);
+            --foreground: oklch(0.15 0.015 260);
+            --card: oklch(1 0 0);
+            --card-foreground: oklch(0.15 0.015 260);
+            --primary: oklch(0.55 0.22 200);
+            --primary-foreground: oklch(0.98 0 0);
+            --secondary: oklch(0.92 0.01 240);
+            --secondary-foreground: oklch(0.15 0.015 260);
+            --muted: oklch(0.94 0.008 240);
+            --muted-foreground: oklch(0.48 0.01 260);
+            --accent: oklch(0.88 0.015 240);
+            --accent-foreground: oklch(0.15 0.015 260);
+            --destructive: oklch(0.58 0.24 25);
+            --border: oklch(0.88 0.01 240);
+            --input: oklch(0.92 0.008 240);
+            --ring: oklch(0.55 0.22 200);
+            --radius: 0.75rem;
+            
+            /* Gradients */
+            --gradient-subtle: linear-gradient(135deg, oklch(0.99 0.005 240) 0%, oklch(0.97 0.008 220) 100%);
+            --gradient-card: linear-gradient(to bottom, oklch(1 0 0) 0%, oklch(0.995 0.002 240) 100%);
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+        }
+
+        .dark {
+            /* Dark theme colors from your CSS */
+            --background: oklch(0.11 0.015 260);
+            --foreground: oklch(0.96 0.005 240);
+            --card: oklch(0.15 0.018 260);
+            --card-foreground: oklch(0.96 0.005 240);
+            --primary: oklch(0.65 0.22 200);
+            --primary-foreground: oklch(0.11 0.015 260);
+            --secondary: oklch(0.2 0.02 260);
+            --secondary-foreground: oklch(0.92 0.005 240);
+            --muted: oklch(0.18 0.018 260);
+            --muted-foreground: oklch(0.62 0.008 240);
+            --accent: oklch(0.22 0.02 260);
+            --destructive: oklch(0.58 0.24 25);
+            --border: oklch(0.25 0.02 260);
+            --input: oklch(0.2 0.02 260);
+            --ring: oklch(0.65 0.22 200);
+            
+            /* Dark gradients */
+            --gradient-subtle: linear-gradient(135deg, oklch(0.12 0.016 260) 0%, oklch(0.14 0.018 250) 100%);
+            --gradient-card: linear-gradient(to bottom, oklch(0.15 0.018 260) 0%, oklch(0.14 0.017 260) 100%);
+            
+            /* Dark shadows */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.6), 0 8px 10px -6px rgb(0 0 0 / 0.4);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: var(--foreground);
+            background: var(--gradient-subtle);
+            min-height: 100vh;
+            padding: 0;
+            font-feature-settings: 'rlig' 1, 'calt' 1, 'ss01' 1;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            position: relative;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--foreground);
+            background: linear-gradient(135deg, var(--primary), oklch(0.6 0.2 145));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .last-updated {
+            color: var(--muted-foreground);
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            margin-top: 0.5rem;
+        }
+        
+        .content {
+            background: var(--gradient-card);
+            backdrop-filter: blur(10px);
+            border-radius: calc(var(--radius) * 1.5);
+            padding: 2.5rem;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-xl);
+            transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
+        
+        .content:hover {
+            box-shadow: var(--shadow-xl);
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin: 2.5rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary);
+            color: var(--foreground);
+            position: relative;
+        }
+        
+        h2:first-of-type {
+            margin-top: 0;
+        }
+        
+        h3 {
+            font-size: 1.3rem;
+            margin: 1.5rem 0 0.75rem;
+            color: var(--primary);
+        }
+        
+        p {
+            margin-bottom: 1.2rem;
+            color: var(--muted-foreground);
+        }
+        
+        ul, ol {
+            margin: 1rem 0 1.5rem 1.5rem;
+            color: var(--muted-foreground);
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        strong {
+            color: var(--foreground);
+            font-weight: 600;
+        }
+        
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-bottom: 1px dotted transparent;
+            padding-bottom: 1px;
+        }
+        
+        a:hover {
+            color: var(--primary);
+            border-bottom: 1px dotted var(--primary);
+        }
+        
+        .highlight-box {
+            background-color: color-mix(in oklch, var(--primary) 5%, transparent);
+            border-left: 4px solid var(--primary);
+            padding: 1.2rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+            border-color: var(--primary);
+        }
+        
+        .contact-details {
+            background-color: color-mix(in oklch, var(--primary) 8%, transparent);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border: 1px solid color-mix(in oklch, var(--primary) 20%, transparent);
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            color: var(--muted-foreground);
+            font-size: 0.9rem;
+        }
+        
+        .footer strong {
+            color: var(--primary);
+        }
+        
+        .primary-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            margin: 0 8px;
+            vertical-align: middle;
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Better selection colors */
+        ::selection {
+            background-color: color-mix(in oklch, var(--primary) 20%, transparent);
+            color: inherit;
+        }
+        
+        /* Enhanced focus styles for accessibility */
+        :focus-visible {
+            outline: 2px solid var(--ring);
+            outline-offset: 2px;
+            border-radius: 2px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem 1rem;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .content {
+                padding: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .content {
+                padding: 1.2rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+        }
+        
+        /* Professional animations */
+        @keyframes fade-in-up {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .animate-fade-in-up {
+            animation: fade-in-up 0.4s ease-out;
+        }
+        
+        .animate-fade-in {
+            animation: fade-in 0.3s ease-out;
+        }
+        
+        /* Decorative elements with theme colors */
+        .decorative-corner {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, color-mix(in oklch, var(--background) 70%, transparent) 0%, transparent 70%);
+            z-index: -1;
+        }
+        
+        .top-left {
+            top: -150px;
+            left: -150px;
+        }
+        
+        .bottom-right {
+            bottom: -150px;
+            right: -150px;
+        }
+        
+        .primary-corner {
+            position: fixed;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, color-mix(in oklch, var(--primary) 15%, transparent) 0%, transparent 70%);
+            z-index: -1;
+        }
+        
+        .top-right {
+            top: -80px;
+            right: -80px;
+        }
+        
+        .bottom-left {
+            bottom: -80px;
+            left: -80px;
+        }
+    </style>
+</head>
+<body>
+    <div class="decorative-corner top-left"></div>
+    <div class="decorative-corner bottom-right"></div>
+    <div class="primary-corner top-right"></div>
+    <div class="primary-corner bottom-left"></div>
+    
+    <div class="container">
+        <header class="header animate-fade-in-up">
+            <h1>Privacy Policy</h1>
+            <div class="last-updated">Last Updated: January 19, 2026</div>
+        </header>
+        
+        <main class="content animate-fade-in">
+            <h2>Introduction</h2>
+            <p>Callaback ("we," "our," or "us") respects your privacy. This Privacy Policy explains how we collect, use, and protect your information when you use our contact form and API documentation services.</p>
+            
+            <h2>Information We Collect</h2>
+            
+            <h3>Information You Provide</h3>
+            <ul>
+                <li><strong>Contact Form:</strong> Name, email address, referral source, platform preferences, and optional messages</li>
+                <li><strong>Newsletter Subscription:</strong> Email address (if opted in)</li>
+            </ul>
+            
+            <h3>Automatically Collected Information</h3>
+            <ul>
+                <li><strong>Usage Data:</strong> IP address, browser type, access times, and pages viewed</li>
+                <li><strong>Analytics:</strong> We may use cookies and similar technologies to improve our services</li>
+            </ul>
+            
+            <div class="highlight-box">
+                <p><strong>Note:</strong> We collect minimal information necessary to provide and improve our services.</p>
+            </div>
+            
+            <h2>How We Use Your Information</h2>
+            <p>We use your information to:</p>
+            <ul>
+                <li>Respond to your inquiries and requests</li>
+                <li>Send newsletters (if subscribed)</li>
+                <li>Improve our services and documentation</li>
+                <li>Comply with legal obligations</li>
+            </ul>
+            
+            <h2>Data Protection</h2>
+            <p>Your information is:</p>
+            <ul>
+                <li><strong>Encrypted:</strong> Protected by Cloudflare's security infrastructure</li>
+                <li><strong>Limited Access:</strong> Only accessible to authorized personnel</li>
+                <li><strong>Not Sold:</strong> We never sell your personal information to third parties</li>
+            </ul>
+            
+            <h2>Third-Party Services</h2>
+            <p>We use:</p>
+            <ul>
+                <li><strong>Cloudflare:</strong> For hosting, security, and performance</li>
+                <li><strong>Analytics Tools:</strong> To understand usage patterns (anonymized data)</li>
+            </ul>
+            
+            <h2>Your Rights</h2>
+            <p>You have the right to:</p>
+            <ul>
+                <li>Access your personal information</li>
+                <li>Request correction or deletion of your data</li>
+                <li>Opt-out of newsletter communications</li>
+                <li>Withdraw consent at any time</li>
+            </ul>
+            
+            <h2>Data Retention</h2>
+            <p>We retain your information only as long as necessary to fulfill the purposes outlined in this policy or as required by law.</p>
+            
+            <div class="contact-details">
+                <h2>Contact Us</h2>
+                <p>For privacy concerns or data requests, contact us at:</p>
+                <ul>
+                    <li><strong>Email:</strong> privacy@callaback.github.io</li>
+                    <li><strong>Website:</strong> <a href="https://callaback.github.io" target="_blank" rel="noopener">callaback.github.io</a></li>
+                </ul>
+            </div>
+            
+            <h2>Changes to This Policy</h2>
+            <p>We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated "Last Updated" date.</p>
+        </main>
+        
+        <footer class="footer animate-fade-in-up">
+            <p><span class="primary-dot"></span> © 2026 Callaback. All rights reserved. <span class="primary-dot"></span></p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,9 @@
+// components/version-badge.tsx
+
+export function VersionBadge({ version }: { version: string }) {
+  return (
+    <div className="pointer-events-none fixed bottom-2 left-1/2 -translate-x-1/2 text-[10px] text-muted-foreground/60 select-none">
+      build version {version}
+    </div>
+  )
+}

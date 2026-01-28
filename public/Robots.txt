@@ -1,0 +1,45 @@
+# Robots.txt for Callaback.com
+# https://callaback.com/robots.txt
+
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Disallow admin and private areas 
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/static/
+Disallow: /private/
+
+# Crawl-delay for specific bots
+# User-agent: Googlebot
+# Crawl-delay: 0
+
+# Sitemap location
+Sitemap: https://callaback.com/sitemap.xml
+Sitemap: https://callaback.com/sitemap-0.xml
+
+# Common good bots
+User-agent: Googlebot
+User-agent: Googlebot-Image
+User-agent: Googlebot-Mobile
+User-agent: Bingbot
+User-agent: Slurp
+User-agent: DuckDuckBot
+User-agent: Baiduspider
+User-agent: YandexBot
+User-agent: facebookexternalhit
+Allow: /
+
+# Block bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
