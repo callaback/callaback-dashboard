@@ -4,7 +4,10 @@ import { useState, useEffect } from "react"
 import { ChevronLeft, ChevronRight, Phone, Clock, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { toast } from "sonner"
+import { createClient } from "@/lib/supabase/client"
 
 interface Booking {
   id: string
@@ -140,158 +143,158 @@ export function CallbackCalendar() {
       </CardHeader>
       <CardContent className="flex-1 flex flex-col gap-3 overflow-hidden">
         <ScrollArea className="flex-1">
-          <div className="pr-4">
-        {/* Calendar */}
-        <div className="border rounded-lg p-3 bg-slate-50 dark:bg-slate-800 dark:border-slate-700">
-          {/* Month Navigation */}
-          <div className="flex items-center justify-between mb-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7"
-              onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1))}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <p className="text-sm font-semibold dark:text-slate-100">{monthName}</p>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7"
-              onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1))}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-
-          {/* Day Headers */}
-          <div className="grid grid-cols-7 gap-1 mb-2">
-            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(day => (
-              <div key={day} className="text-center text-xs font-semibold text-slate-600 dark:text-slate-400 py-1">
-                {day}
-              </div>
-            ))}
-          </div>
-
-          {/* Calendar Days */}
-          <div className="grid grid-cols-7 gap-1">
-            {emptyDays.map(i => (
-              <div key={`empty-${i}`} className="aspect-square" />
-            ))}
-            {days.map(day => {
-              const dateStr = formatDateString(currentDate.getFullYear(), currentDate.getMonth(), day)
-              const dayBookings = bookings.filter(b => b.date === dateStr)
-              const isSelected = selectedDate === dateStr
-              const isToday = new Date().toDateString() === new Date(currentDate.getFullYear(), currentDate.getMonth(), day).toDateString()
-
-              return (
-                <button
-                  key={day}
-                  onClick={() => setSelectedDate(dateStr)}
-                  className={`aspect-square text-xs font-medium rounded flex items-center justify-center relative transition-colors ${
-                    isSelected
-                      ? "bg-primary text-white"
-                      : isToday
-                      ? "bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100 border border-blue-300 dark:border-blue-700"
-                      : dayBookings.length > 0
-                      ? "bg-amber-100 dark:bg-amber-900 text-amber-900 dark:text-amber-100"
-                      : "hover:bg-slate-200 dark:hover:bg-slate-700 dark:text-slate-300"
-                  }`}
+          <div className="pr-4 space-y-3">
+            {/* Calendar */}
+            <div className="border rounded-lg p-3 bg-slate-50 dark:bg-slate-800 dark:border-slate-700">
+              {/* Month Navigation */}
+              <div className="flex items-center justify-between mb-3">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1))}
                 >
-                  {day}
-                  {dayBookings.length > 0 && (
-                    <span className="absolute bottom-0.5 right-0.5 h-1 w-1 bg-red-500 rounded-full" />
-                  )}
-                </button>
-              )
-            })}
-          </div>
-        </div>
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <p className="text-sm font-semibold dark:text-slate-100">{monthName}</p>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1))}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
 
-        {/* Time Slots */}
-        {selectedDate && (
-          <div className="border rounded-lg p-3 bg-slate-50 dark:bg-slate-800 dark:border-slate-700">
-            <p className="text-xs font-semibold mb-2 dark:text-slate-100">Select Time</p>
-            <div className="grid grid-cols-4 gap-1 max-h-[120px] overflow-y-auto">
-              {timeSlots.map(time => {
-                const isBooked = isSlotBooked(selectedDate, time)
-                const isSelected = selectedTime === time
-
-                return (
-                  <button
-                    key={time}
-                    onClick={() => !isBooked && setSelectedTime(time)}
-                    disabled={isBooked}
-                    className={`text-xs py-1.5 rounded font-medium transition-colors ${
-                      isSelected
-                        ? "bg-primary text-white"
-                        : isBooked
-                        ? "bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-200 cursor-not-allowed opacity-50"
-                        : "bg-white dark:bg-slate-700 border dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600 dark:text-slate-300"
-                    }`}
-                  >
-                    {time}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* Phone Input */}
-        {selectedDate && selectedTime && (
-          <div className="border rounded-lg p-3 bg-slate-50 dark:bg-slate-800 dark:border-slate-700">
-            <label className="text-xs font-semibold block mb-2 dark:text-slate-100">Phone Number</label>
-            <Input
-              type="tel"
-              placeholder="(555) 123-4567"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              className="text-sm mb-2 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
-            />
-            <Button
-              size="sm"
-              className="w-full"
-              onClick={handleBooking}
-              disabled={isLoading}
-            >
-              <Phone className="h-3 w-3 mr-2" />
-              {isLoading ? "Booking..." : "Book Callback"}
-            </Button>
-          </div>
-        )}
-
-        {/* Upcoming Bookings */}
-        <div className="border rounded-lg p-3 bg-slate-50 dark:bg-slate-800 dark:border-slate-700 flex-1 overflow-y-auto">
-          <p className="text-xs font-semibold mb-2 dark:text-slate-100">Upcoming</p>
-          <div className="space-y-2">
-            {bookings
-              .filter(b => new Date(`${b.date}T${b.time}`) > new Date())
-              .slice(0, 5)
-              .map(booking => (
-                <div key={booking.id} className="flex items-center justify-between text-xs p-2 bg-white dark:bg-slate-700 rounded border dark:border-slate-600">
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-3 w-3 text-primary" />
-                    <div>
-                      <p className="font-medium dark:text-slate-100">{booking.date} {booking.time}</p>
-                      <p className="text-muted-foreground dark:text-slate-400">{booking.phone}</p>
-                    </div>
+              {/* Day Headers */}
+              <div className="grid grid-cols-7 gap-1 mb-2">
+                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(day => (
+                  <div key={day} className="text-center text-xs font-semibold text-slate-600 dark:text-slate-400 py-1">
+                    {day}
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6"
-                    onClick={() => handleCancelBooking(booking.id)}
-                  >
-                    <X className="h-3 w-3" />
-                  </Button>
+                ))}
+              </div>
+
+              {/* Calendar Days */}
+              <div className="grid grid-cols-7 gap-1">
+                {emptyDays.map(i => (
+                  <div key={`empty-${i}`} className="aspect-square" />
+                ))}
+                {days.map(day => {
+                  const dateStr = formatDateString(currentDate.getFullYear(), currentDate.getMonth(), day)
+                  const dayBookings = bookings.filter(b => b.date === dateStr)
+                  const isSelected = selectedDate === dateStr
+                  const isToday = new Date().toDateString() === new Date(currentDate.getFullYear(), currentDate.getMonth(), day).toDateString()
+
+                  return (
+                    <button
+                      key={day}
+                      onClick={() => setSelectedDate(dateStr)}
+                      className={`aspect-square text-xs font-medium rounded flex items-center justify-center relative transition-colors ${
+                        isSelected
+                          ? "bg-primary text-white"
+                          : isToday
+                          ? "bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100 border border-blue-300 dark:border-blue-700"
+                          : dayBookings.length > 0
+                          ? "bg-amber-100 dark:bg-amber-900 text-amber-900 dark:text-amber-100"
+                          : "hover:bg-slate-200 dark:hover:bg-slate-700 dark:text-slate-300"
+                      }`}
+                    >
+                      {day}
+                      {dayBookings.length > 0 && (
+                        <span className="absolute bottom-0.5 right-0.5 h-1 w-1 bg-red-500 rounded-full" />
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Time Slots */}
+            {selectedDate && (
+              <div className="border rounded-lg p-3 bg-slate-50 dark:bg-slate-800 dark:border-slate-700">
+                <p className="text-xs font-semibold mb-2 dark:text-slate-100">Select Time</p>
+                <div className="grid grid-cols-4 gap-1 max-h-[120px] overflow-y-auto">
+                  {timeSlots.map(time => {
+                    const isBooked = isSlotBooked(selectedDate, time)
+                    const isSelected = selectedTime === time
+
+                    return (
+                      <button
+                        key={time}
+                        onClick={() => !isBooked && setSelectedTime(time)}
+                        disabled={isBooked}
+                        className={`text-xs py-1.5 rounded font-medium transition-colors ${
+                          isSelected
+                            ? "bg-primary text-white"
+                            : isBooked
+                            ? "bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-200 cursor-not-allowed opacity-50"
+                            : "bg-white dark:bg-slate-700 border dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600 dark:text-slate-300"
+                        }`}
+                      >
+                        {time}
+                      </button>
+                    )
+                  })}
                 </div>
-              ))}
-            {bookings.filter(b => new Date(`${b.date}T${b.time}`) > new Date()).length === 0 && (
-              <p className="text-xs text-muted-foreground dark:text-slate-400 text-center py-4">No upcoming bookings</p>
+              </div>
             )}
-          </div>
-        </div>
+
+            {/* Phone Input */}
+            {selectedDate && selectedTime && (
+              <div className="border rounded-lg p-3 bg-slate-50 dark:bg-slate-800 dark:border-slate-700">
+                <label className="text-xs font-semibold block mb-2 dark:text-slate-100">Phone Number</label>
+                <Input
+                  type="tel"
+                  placeholder="(555) 123-4567"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  className="text-sm mb-2 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
+                />
+                <Button
+                  size="sm"
+                  className="w-full"
+                  onClick={handleBooking}
+                  disabled={isLoading}
+                >
+                  <Phone className="h-3 w-3 mr-2" />
+                  {isLoading ? "Booking..." : "Book Callback"}
+                </Button>
+              </div>
+            )}
+
+            {/* Upcoming Bookings */}
+            <div className="border rounded-lg p-3 bg-slate-50 dark:bg-slate-800 dark:border-slate-700">
+              <p className="text-xs font-semibold mb-2 dark:text-slate-100">Upcoming</p>
+              <div className="space-y-2">
+                {bookings
+                  .filter(b => new Date(`${b.date}T${b.time}`) > new Date())
+                  .slice(0, 5)
+                  .map(booking => (
+                    <div key={booking.id} className="flex items-center justify-between text-xs p-2 bg-white dark:bg-slate-700 rounded border dark:border-slate-600">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-3 w-3 text-primary" />
+                        <div>
+                          <p className="font-medium dark:text-slate-100">{booking.date} {booking.time}</p>
+                          <p className="text-muted-foreground dark:text-slate-400">{booking.phone}</p>
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() => handleCancelBooking(booking.id)}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ))}
+                {bookings.filter(b => new Date(`${b.date}T${b.time}`) > new Date()).length === 0 && (
+                  <p className="text-xs text-muted-foreground dark:text-slate-400 text-center py-4">No upcoming bookings</p>
+                )}
+              </div>
+            </div>
           </div>
         </ScrollArea>
       </CardContent>
