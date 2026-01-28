@@ -36,6 +36,7 @@ import { SyncChat } from "@/components/sync-chat"
 import { NotesLeadsPanel } from "@/components/notes-leads-panel"
 import { CallbackCalendar } from "@/components/callback-calendar"
 import { FileManager } from "@/components/file-manager"
+import { LocalMaps } from "@/components/local-maps"
 
 // YOUR PHONE NUMBER
 const YOUR_PHONE_NUMBER = "18444073511" // (844) 407-3511
@@ -524,16 +525,9 @@ export default function DashboardPage() {
   const handleLogout = async () => {
     try {
       console.log("Logging out...")
-      const { error } = await supabase.auth.signOut()
-      
-      if (error) {
-        console.error("Logout error:", error)
-        toast.error("Failed to logout. Please try again.")
-        return
-      }
+      await supabase.auth.signOut()
       
       console.log("Logout successful")
-      toast.success("Logged out successfully")
       
       // Clear local state
       setUser(null)
@@ -544,10 +538,10 @@ export default function DashboardPage() {
       
       // Redirect to login
       router.push('/login')
+      toast.success("Logged out successfully")
       
     } catch (error) {
       console.error("Logout exception:", error)
-      toast.error("An error occurred during logout")
       // Force redirect anyway
       router.push('/login')
     }
@@ -614,6 +608,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       <Toaster position="top-center" richColors />
+      <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCDSlhoto3IzP2P9IGKMP2JrRy5dRO5Frg&libraries=maps,places"></script>
       
       {/* Header with Phone Number */}
       <header className="border-b border-slate-200 bg-white/80 backdrop-blur-xl sticky top-0 z-50 shadow-sm overflow-hidden">
@@ -840,7 +835,36 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                {/* Dial Pad - Compact or Full */}
+                {/* Quick Contact Search */}
+                <div className="mb-3">
+                  <Input
+                    placeholder="Search contacts..."
+                    className="text-xs h-8"
+                    onChange={(e) => {
+                      const query = e.target.value.toLowerCase()
+                      const filtered = contacts.filter(c => 
+                        c.name.toLowerCase().includes(query) || c.phone.includes(query)
+                      )
+                      // Show filtered contacts in a simple way
+                    }}
+                  />
+                  <div className="mt-1 max-h-[80px] overflow-y-auto space-y-1">
+                    {contacts.slice(0, 3).map(contact => (
+                      <button
+                        key={contact.id}
+                        onClick={() => {
+                          setPhoneNumber(contact.phone)
+                          setDialPadValue(contact.phone.replace(/\D/g, ""))
+                          setSelectedContactForCall(contact)
+                        }}
+                        className="w-full text-left text-xs p-1.5 bg-slate-100 dark:bg-slate-700 rounded hover:bg-slate-200 dark:hover:bg-slate-600"
+                      >
+                        <p className="font-medium truncate">{contact.name}</p>
+                        <p className="text-muted-foreground text-[10px]">{contact.phone}</p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <div className={cn(
                   "grid grid-cols-3 gap-1.5 mb-3",
                   showFullDialer ? "" : ""
@@ -962,77 +986,14 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* CENTER COLUMN - Contacts + Chat */}
+          {/* CENTER COLUMN - Maps + Chat */}
           <div className="lg:col-span-5 flex flex-col gap-3">
-            {/* Contacts Manager - Fixed height */}
+            {/* Local Maps - Fixed height */}
             <div className="h-[380px]">
-              <ContactsManager
-                contacts={contacts.map(c => ({
-                  id: c.id,
-                  name: c.name,
-                  phone: c.phone,
-                  email: c.email,
-                  company: c.company,
-                  createdAt: new Date(c.created_at)
-                }))}
-                onAddContact={async (contact) => {
-                  try {
-                    const { data, error } = await supabase
-                      .from("contacts")
-                      .insert({
-                        name: contact.name,
-                        phone: contact.phone,
-                        email: contact.email,
-                        company: contact.company,
-                        created_at: new Date().toISOString()
-                      })
-                      .select()
-                      .single()
-                    
-                    if (error) throw error
-                    
-                    toast.success("Contact added successfully")
-                    fetchDashboardData()
-                  } catch (error) {
-                    console.error("Error adding contact:", error)
-                    toast.error("Failed to add contact")
-                  }
-                }}
-                onUpdateContact={async (id, updates) => {
-                  try {
-                    const { error } = await supabase
-                      .from("contacts")
-                      .update(updates)
-                      .eq("id", id)
-                    
-                    if (error) throw error
-                    
-                    toast.success("Contact updated successfully")
-                    fetchDashboardData()
-                  } catch (error) {
-                    console.error("Error updating contact:", error)
-                    toast.error("Failed to update contact")
-                  }
-                }}
-                onDeleteContact={async (id) => {
-                  try {
-                    const { error } = await supabase
-                      .from("contacts")
-                      .delete()
-                      .eq("id", id)
-                    
-                    if (error) throw error
-                    
-                    toast.success("Contact deleted successfully")
-                    fetchDashboardData()
-                  } catch (error) {
-                    console.error("Error deleting contact:", error)
-                    toast.error("Failed to delete contact")
-                  }
-                }}
-                onSelectContact={handleContactSelectForCall}
-                selectedContactId={selectedContactForCall?.id}
-              />
+              <LocalMaps onSelectBusiness={(phone) => {
+                setPhoneNumber(phone)
+                setDialPadValue(phone.replace(/\D/g, ""))
+              }} />
             </div>
             
             {/* Sync Chat - Takes remaining space */}

@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 
 // Phone number formatting
 export function formatPhoneNumber(phone?: string): string {
-  if (!phone || phone.trim() === '') return 'Unknown'
+  if (!phone || phone.trim() === '') return ''
   
   // Remove all non-digit characters
   const cleaned = phone.replace(/\D/g, '')
