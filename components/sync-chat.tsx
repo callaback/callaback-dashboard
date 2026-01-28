@@ -10,6 +10,13 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { createClient } from "@/lib/supabase/client"
 
+// Import Twilio Sync
+declare global {
+  interface Window {
+    Twilio: any;
+  }
+}
+
 interface Message {
   id: string
   sender_identity: string
@@ -41,6 +48,9 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
   const [tempSessionId, setTempSessionId] = useState(sessionId)
   const [isLoading, setIsLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'chat' | 'sms'>('chat')
+  const [syncClient, setSyncClient] = useState<any>(null)
+  const [syncDocument, setSyncDocument] = useState<any>(null)
+  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected'>('connecting')
   const scrollRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   
@@ -55,12 +65,90 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
     scrollToBottom()
   }, [messages])
 
-  // Fetch messages for current session
-  async function fetchMessages() {
+  // Initialize Twilio Sync
+  useEffect(() => {
+    const initializeSync = async () => {
+      try {
+        // Get Twilio token from your API
+        const response = await fetch('/api/twilio/token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ identity })
+        })
+        
+        if (!response.ok) throw new Error('Failed to get token')
+        
+        const { token } = await response.json()
+        
+        // Load Twilio SDK if not already loaded
+        if (!window.Twilio) {
+          const script = document.createElement('script')
+          script.src = 'https://sdk.twilio.com/js/sync/releases/3.0.0/twilio-sync.min.js'
+          script.onload = () => initializeSyncClient(token)
+          document.head.appendChild(script)
+        } else {
+          initializeSyncClient(token)
+        }
+      } catch (error) {
+        console.error('Failed to initialize Sync:', error)
+        setConnectionStatus('disconnected')
+      }
+    }
+
+    const initializeSyncClient = async (token: string) => {
+      try {
+        const client = new window.Twilio.Sync.Client(token)
+        setSyncClient(client)
+        
+        client.on('connectionStateChanged', (state: string) => {
+          setConnectionStatus(state === 'connected' ? 'connected' : 'disconnected')
+        })
+
+        // Open or create sync document for this session
+        const docName = `chat-${sessionId}`
+        const document = await client.document(docName)
+        setSyncDocument(document)
+        
+        // Load existing messages
+        const data = document.value || { messages: [], participants: [identity] }
+        setMessages(data.messages || [])
+        setParticipants(data.participants || [identity])
+        
+        // Listen for updates
+        document.on('updated', (event: any) => {
+          const { messages: newMessages, participants: newParticipants } = event.value
+          setMessages(newMessages || [])
+          setParticipants(newParticipants || [identity])
+        })
+        
+        setConnectionStatus('connected')
+        setIsLoading(false)
+        
+      } catch (error) {
+        console.error('Sync client error:', error)
+        setConnectionStatus('disconnected')
+        setIsLoading(false)
+      }
+    }
+
+    if (activeTab === 'chat') {
+      initializeSync()
+    } else {
+      fetchSMSMessages()
+    }
+
+    return () => {
+      if (syncClient) {
+        syncClient.shutdown()
+      }
+    }
+  }, [sessionId, identity, activeTab])
+
+  // Fetch SMS messages (fallback for SMS tab)
+  async function fetchSMSMessages() {
     setIsLoading(true)
     
-    if (activeTab === 'sms' && phoneNumber) {
-      // Fetch SMS messages for this phone number
+    if (phoneNumber) {
       const formattedPhone = phoneNumber.startsWith('+') ? phoneNumber : `+${phoneNumber}`
       
       const { data: smsData, error: smsError } = await supabase
@@ -88,31 +176,43 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
         
         setMessages(smsMessages)
         
-        // Extract participants from SMS
         const senders = [...new Set(smsData.map(m => m.from_number))]
         const receivers = [...new Set(smsData.map(m => m.to_number))]
         const allParticipants = [...new Set([...senders, ...receivers, identity])]
         setParticipants(allParticipants)
       }
-      
-    } else {
-      // Fetch chat messages
-      const { data: chatData, error: chatError } = await supabase
-        .from("chat_messages")
-        .select("*")
-        .eq("session_id", sessionId)
-        .order("created_at", { ascending: true })
-        .limit(100)
-      
-      if (!chatError && chatData) {
-        setMessages(chatData)
-        // Update participants from message senders
-        const senders = [...new Set(chatData.map((m) => m.sender_identity))]
-        setParticipants([...new Set([identity, ...senders])])
-      }
     }
     
     setIsLoading(false)
+  }
+
+  // Send message via Twilio Sync
+  const sendSyncMessage = async (message: string) => {
+    if (!syncDocument) return
+
+    const newMsg: Message = {
+      id: `${Date.now()}-${Math.random()}`,
+      sender_identity: identity,
+      message: message.trim(),
+      created_at: new Date().toISOString(),
+      session_id: sessionId,
+      source: 'chat'
+    }
+
+    try {
+      const currentData = syncDocument.value || { messages: [], participants: [identity] }
+      const updatedMessages = [...(currentData.messages || []), newMsg]
+      const updatedParticipants = [...new Set([...(currentData.participants || []), identity])]
+      
+      await syncDocument.set({
+        messages: updatedMessages,
+        participants: updatedParticipants
+      })
+      
+      setNewMessage("")
+    } catch (error) {
+      console.error('Failed to send message:', error)
+    }
   }
 
   // Send SMS message
@@ -132,24 +232,10 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
       
       if (response.ok) {
         setNewMessage("")
-        // Don't add to local state - let real-time subscription handle it
-        await fetchMessages() // Refresh to get the sent message
+        await fetchSMSMessages()
       }
     } catch (error) {
       console.error("Error sending SMS:", error)
-    }
-  }
-
-  // Send chat message
-  async function sendChatMessage(message: string) {
-    const { error } = await supabase.from("chat_messages").insert({
-      session_id: sessionId,
-      sender_identity: identity,
-      message: message.trim(),
-    })
-
-    if (!error) {
-      setNewMessage("")
     }
   }
 
@@ -164,95 +250,9 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
         alert("Please select a recipient for SMS")
       }
     } else {
-      await sendChatMessage(newMessage)
+      await sendSyncMessage(newMessage)
     }
   }
-
-  useEffect(() => {
-    fetchMessages()
-
-    // Subscribe to real-time messages
-    let channel
-    
-    if (activeTab === 'chat') {
-      channel = supabase
-        .channel(`chat-${sessionId}`)
-        .on(
-          "postgres_changes",
-          {
-            event: "INSERT",
-            schema: "public",
-            table: "chat_messages",
-            filter: `session_id=eq.${sessionId}`,
-          },
-          (payload) => {
-            const newMsg = payload.new as Message
-            setMessages((prev) => {
-              // Avoid duplicates
-              if (prev.find(m => m.id === newMsg.id)) return prev
-              return [...prev, newMsg]
-            })
-            if (!participants.includes(newMsg.sender_identity)) {
-              setParticipants((prev) => [...new Set([...prev, newMsg.sender_identity])])
-            }
-          }
-        )
-        .subscribe()
-    } else if (activeTab === 'sms' && phoneNumber) {
-      const formattedPhone = phoneNumber.startsWith('+') ? phoneNumber : `+${phoneNumber}`
-      
-      channel = supabase
-        .channel(`sms-${formattedPhone}`)
-        .on(
-          "postgres_changes",
-          {
-            event: "INSERT",
-            schema: "public",
-            table: "interactions",
-          },
-          (payload) => {
-            const newInteraction = payload.new
-            if (newInteraction.type === 'sms' && 
-                (newInteraction.from_number === formattedPhone || 
-                 newInteraction.to_number === formattedPhone)) {
-              const newMsg: Message = {
-                id: newInteraction.id,
-                sender_identity: newInteraction.from_number,
-                message: newInteraction.body || "",
-                created_at: newInteraction.created_at,
-                session_id: `sms-${newInteraction.from_number.replace('+', '')}`,
-                metadata: {
-                  type: 'sms',
-                  direction: newInteraction.direction,
-                  twilio_sid: newInteraction.twilio_sid,
-                  to_number: newInteraction.to_number
-                },
-                source: 'sms'
-              }
-              
-              setMessages((prev) => {
-                if (prev.find(m => m.id === newMsg.id)) return prev
-                return [...prev, newMsg]
-              })
-              
-              const newParticipants = [
-                newInteraction.from_number,
-                newInteraction.to_number,
-                ...participants
-              ]
-              setParticipants([...new Set(newParticipants)])
-            }
-          }
-        )
-        .subscribe()
-    }
-
-    return () => {
-      if (channel) {
-        supabase.removeChannel(channel)
-      }
-    }
-  }, [sessionId, activeTab, phoneNumber])
 
   const copySessionLink = () => {
     navigator.clipboard.writeText(`${window.location.origin}?session=${sessionId}&identity=guest`)
@@ -271,11 +271,19 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
     return new Date(dateStr).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
   }
 
-  const getMessageIcon = (message: Message) => {
-    if (message.metadata?.type === 'sms') {
-      return <Smartphone className="h-3 w-3 mr-1" />
+  const getConnectionBadge = () => {
+    const colors = {
+      connecting: 'bg-yellow-500',
+      connected: 'bg-green-500',
+      disconnected: 'bg-red-500'
     }
-    return null
+    
+    return (
+      <div className="flex items-center gap-1">
+        <div className={`w-2 h-2 rounded-full ${colors[connectionStatus]}`} />
+        <span className="text-xs capitalize">{connectionStatus}</span>
+      </div>
+    )
   }
 
   return (
@@ -287,11 +295,12 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
             Sync Chat
           </CardTitle>
           <div className="flex items-center gap-2">
+            {activeTab === 'chat' && getConnectionBadge()}
             <Badge variant="outline" className="gap-1">
               <Users className="h-3 w-3" />
               {participants.length}
             </Badge>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={fetchMessages}>
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={activeTab === 'sms' ? fetchSMSMessages : undefined}>
               <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
             </Button>
           </div>
@@ -299,7 +308,7 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
         
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'chat' | 'sms')} className="mt-2">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="chat">Web Chat</TabsTrigger>
+            <TabsTrigger value="chat">Sync Chat</TabsTrigger>
             <TabsTrigger value="sms" disabled={!phoneNumber}>
               <Smartphone className="h-3 w-3 mr-2" />
               SMS
@@ -375,7 +384,6 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
               messages.map((message) => {
                 const isOwn = message.sender_identity === identity
                 const isSMS = message.metadata?.type === 'sms'
-                const isInbound = message.metadata?.direction === 'inbound'
                 
                 return (
                   <div
@@ -383,16 +391,9 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
                     className={`flex flex-col ${isOwn ? "items-end" : "items-start"}`}
                   >
                     <div className="flex items-center gap-2 mb-1">
-                      {getMessageIcon(message)}
+                      {isSMS && <Smartphone className="h-3 w-3" />}
                       <span className="text-xs text-muted-foreground">
-                        {isSMS ? (
-                          <>
-                            {message.sender_identity}
-                            {isInbound ? ' → You' : ' → You'}
-                          </>
-                        ) : (
-                          message.sender_identity
-                        )}
+                        {message.sender_identity}
                       </span>
                       <span className="text-xs text-muted-foreground">
                         {formatTime(message.created_at)}
@@ -407,8 +408,6 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
                       className={`max-w-[80%] rounded-lg px-3 py-2 text-sm ${
                         isOwn
                           ? "bg-primary text-primary-foreground"
-                          : isSMS && isInbound
-                          ? "bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-100"
                           : "bg-secondary text-secondary-foreground"
                       }`}
                     >
@@ -433,8 +432,13 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
             className="flex-1"
+            disabled={activeTab === 'chat' && connectionStatus !== 'connected'}
           />
-          <Button size="icon" onClick={handleSend} disabled={!newMessage.trim()}>
+          <Button 
+            size="icon" 
+            onClick={handleSend} 
+            disabled={!newMessage.trim() || (activeTab === 'chat' && connectionStatus !== 'connected')}
+          >
             <Send className="h-4 w-4" />
           </Button>
         </div>
@@ -442,3 +446,4 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
     </Card>
   )
 }
+
