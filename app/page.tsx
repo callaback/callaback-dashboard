@@ -835,7 +835,7 @@ export default function DashboardPage() {
                     )}
                   </div>
                   <div className="text-lg font-mono text-center p-2 bg-secondary/30 rounded border">
-                    {formatPhoneNumber(phoneNumber) || "Enter number"}
+                    {formatPhoneNumber(phoneNumber) || "callaback.com"}
                   </div>
                 </div>
 
