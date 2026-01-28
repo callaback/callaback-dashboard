@@ -624,17 +624,7 @@ export default function DashboardPage() {
         {/* Animated background */}
         <div className="absolute inset-0 opacity-30">
           <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-cyan-500/20 animate-pulse" />
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer" style={{
-            backgroundSize: '200% 100%',
-            animation: 'shimmer 3s infinite'
-          }} />
         </div>
-        <style>{`
-          @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-          }
-        `}</style>
         
         <div className="max-w-[2000px] mx-auto px-4 sm:px-6 py-3 relative z-10">
           <div className="flex items-center justify-between gap-4">
