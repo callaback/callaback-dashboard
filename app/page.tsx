@@ -800,7 +800,7 @@ export default function DashboardPage() {
           {/* LEFT COLUMN - Phone Dialer + File Manager */}
           <div className="lg:col-span-3 flex flex-col gap-3">
             {/* Phone Dialer - Compact or Full */}
-            <Card className="flex-shrink-0">
+            <Card className="flex-shrink-0 h-auto">
               <CardHeader className="pb-2 px-4 pt-4">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-sm flex items-center gap-2">
