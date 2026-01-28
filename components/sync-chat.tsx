@@ -84,18 +84,29 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
         if (!window.Twilio) {
           const script = document.createElement('script')
           script.src = 'https://sdk.twilio.com/js/sync/releases/3.0.0/twilio-sync.min.js'
-          script.onload = () => initializeSyncClient(token)
+          script.async = true
+          script.onload = () => {
+            if (window.Twilio?.Sync?.Client) {
+              initializeSyncClient(token)
+            } else {
+              throw new Error('Twilio Sync not available after loading')
+            }
+          }
           script.onerror = () => {
             console.error('Failed to load Twilio SDK')
             setConnectionStatus('disconnected')
+            setIsLoading(false)
           }
           document.head.appendChild(script)
-        } else {
+        } else if (window.Twilio?.Sync?.Client) {
           initializeSyncClient(token)
+        } else {
+          throw new Error('Twilio Sync not available')
         }
       } catch (error) {
         console.error('Failed to initialize Sync:', error)
         setConnectionStatus('disconnected')
+        setIsLoading(false)
       }
     }
 
@@ -161,7 +172,11 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
 
     return () => {
       if (syncClient) {
-        syncClient.shutdown()
+        try {
+          syncClient.shutdown()
+        } catch (e) {
+          console.error('Error shutting down sync client:', e)
+        }
       }
     }
   }, [sessionId, identity, activeTab])
@@ -327,7 +342,13 @@ export function SyncChat({ sessionId, identity, phoneNumber, onSessionChange }: 
               <Users className="h-3 w-3" />
               {participants.length}
             </Badge>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={activeTab === 'sms' ? fetchSMSMessages : undefined}>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-8 w-8" 
+              onClick={() => activeTab === 'sms' && fetchSMSMessages()}
+              disabled={isLoading}
+            >
               <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
             </Button>
           </div>
