@@ -7,9 +7,6 @@ export default function Footer() {
             <a href="/company.html" className="hover:text-cyan-500">2025© Invariant Ego, LLC.</a>
           </div>
           <div className="flex items-center gap-3">
-            <a href="/TheTeam.html" className="hover:text-cyan-600 transition-colors">
-              Dev Team
-            </a>
             <a href="/PrivacyPolicy.html" className="hover:text-emerald-600 transition-colors">
               Privacy
             </a>
@@ -18,6 +15,9 @@ export default function Footer() {
             </a>
             <a href="mailto:support@callaback.com" className="hover:text-emerald-600 transition-colors">
               Support
+            </a>
+            <a href="/TheTeam.html" className="hover:text-cyan-600 transition-colors">
+              The Team
             </a>
           </div>
         </div>
