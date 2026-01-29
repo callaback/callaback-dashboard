@@ -20,7 +20,7 @@ export default function Footer() {
               Support
             </a>
             <a href="/TheTeam.html" className="hover:text-cyan-600 transition-colors">
-              The Team
+              The Team 🥚
             </a>
           </div>
         </div>
