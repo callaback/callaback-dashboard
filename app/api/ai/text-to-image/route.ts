@@ -4,19 +4,28 @@ export async function POST(request: NextRequest) {
   try {
     const { prompt, steps } = await request.json()
 
-    const url = new URL('https://text-to-image.callaback.com/generate')
-    url.searchParams.set('prompt', prompt || 'cyberpunk cat')
-    url.searchParams.set('num_steps', (steps || 20).toString())
+    const url = `https://text-to-image.callaback.com/generate?prompt=${encodeURIComponent(prompt || 'cyberpunk cat')}&num_steps=${steps || 20}`
+    
+    console.log('Calling image API:', url)
 
-    const response = await fetch(url.toString(), {
-      method: 'GET'
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; Dashboard/1.0)',
+        'Accept': 'image/png,image/*,*/*'
+      }
     })
 
+    console.log('Image API Response:', response.status, response.headers.get('content-type'))
+
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
+      const errorText = await response.text()
+      console.error('Image API Error:', errorText)
+      throw new Error(`HTTP ${response.status}: ${errorText}`)
     }
 
     const imageBlob = await response.blob()
+    console.log('Image blob size:', imageBlob.size)
     
     return new NextResponse(imageBlob, {
       headers: {
@@ -28,7 +37,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Text-to-Image API Error:', error)
     return NextResponse.json(
-      { error: 'Failed to generate image. Please try again.' },
+      { error: `Failed to generate image: ${error.message}` },
       { status: 500 }
     )
   }
