@@ -82,6 +82,8 @@ export function CallbackCalendar() {
   const addTodo = async () => {
     if (!newTodo.trim()) return
     
+    console.log("Adding todo:", newTodo) // Debug log
+    
     try {
       const response = await fetch("https://to-do-list-kv.callaback.workers.dev", {
         method: "POST",
@@ -89,12 +91,17 @@ export function CallbackCalendar() {
         body: JSON.stringify({ text: newTodo })
       })
       
+      console.log("Response status:", response.status) // Debug log
+      
       if (response.ok) {
         setNewTodo("")
         loadTodos()
         toast.success("Todo added")
         setShowConfetti(true)
         setTimeout(() => setShowConfetti(false), 100)
+      } else {
+        console.error("Response not ok:", response.statusText)
+        toast.error("Failed to add todo")
       }
     } catch (error) {
       console.error("Error adding todo:", error)

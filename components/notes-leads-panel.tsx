@@ -14,23 +14,47 @@ export function NotesLeadsPanel() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const supabase = createClient()
 
-  // Load notes from localStorage on mount
+  // Load notes from database on mount
   useEffect(() => {
-    const saved = localStorage.getItem("persistent_notes")
-    if (saved) {
-      setNotes(saved)
-      const timestamp = localStorage.getItem("notes_last_saved")
-      if (timestamp) setLastSaved(timestamp)
-    }
+    loadNotes()
   }, [])
 
-  // Auto-save to localStorage
+  const loadNotes = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('leads')
+        .select('description')
+        .eq('type', 'note')
+        .eq('title', 'persistent_notes')
+        .single()
+      
+      if (data && !error) {
+        setNotes(data.description || "")
+        setLastSaved(new Date().toLocaleTimeString())
+      }
+    } catch (error) {
+      console.error("Failed to load notes:", error)
+    }
+  }
+
+  // Save to database
   const saveNotes = async () => {
     setIsSaving(true)
     try {
-      localStorage.setItem("persistent_notes", notes)
+      const { error } = await supabase
+        .from('leads')
+        .upsert({
+          title: 'persistent_notes',
+          description: notes,
+          type: 'note',
+          status: 'new'
+        }, {
+          onConflict: 'title'
+        })
+
+      if (error) throw error
+
       const now = new Date().toLocaleTimeString()
-      localStorage.setItem("notes_last_saved", now)
       setLastSaved(now)
       setTimeout(() => setIsSaving(false), 500)
     } catch (error) {
@@ -62,12 +86,20 @@ export function NotesLeadsPanel() {
     document.body.removeChild(element)
   }
 
-  const clearNotes = () => {
+  const clearNotes = async () => {
     if (confirm("Are you sure you want to clear all notes?")) {
       setNotes("")
-      localStorage.removeItem("persistent_notes")
-      localStorage.removeItem("notes_last_saved")
       setLastSaved("")
+      
+      try {
+        await supabase
+          .from('leads')
+          .delete()
+          .eq('title', 'persistent_notes')
+          .eq('type', 'note')
+      } catch (error) {
+        console.error("Failed to clear notes from database:", error)
+      }
     }
   }
 
