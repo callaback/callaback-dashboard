@@ -4,25 +4,62 @@ export async function POST(request: NextRequest) {
   try {
     const { message } = await request.json()
 
-    // Try the direct API call first
-    const response = await fetch('https://llm.callaback.com', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    // Try different API patterns
+    const attempts = [
+      // Pattern 1: Direct POST to root
+      {
+        url: 'https://llm.callaback.com',
+        method: 'POST',
+        body: JSON.stringify({ message })
       },
-      body: JSON.stringify({ 
-        message: message,
-        model: '@cf/meta/llama-3-8b-instruct'
-      })
-    })
+      // Pattern 2: Form data
+      {
+        url: 'https://llm.callaback.com',
+        method: 'POST',
+        body: new URLSearchParams({ message }).toString(),
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      },
+      // Pattern 3: Query parameter
+      {
+        url: `https://llm.callaback.com?message=${encodeURIComponent(message)}`,
+        method: 'GET'
+      }
+    ]
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
+    for (const attempt of attempts) {
+      try {
+        const response = await fetch(attempt.url, {
+          method: attempt.method,
+          headers: {
+            'Content-Type': 'application/json',
+            ...attempt.headers
+          },
+          body: attempt.body
+        })
+
+        if (response.ok) {
+          const text = await response.text()
+          
+          // Try to parse as JSON first
+          try {
+            const data = JSON.parse(text)
+            return NextResponse.json({ 
+              response: data.response || data.message || data.result || text
+            })
+          } catch {
+            // If not JSON, return as text
+            return NextResponse.json({ response: text })
+          }
+        }
+      } catch (error) {
+        console.log(`Attempt failed:`, error.message)
+        continue
+      }
     }
 
-    const data = await response.json()
+    // If all attempts fail, return a fallback
     return NextResponse.json({ 
-      response: data.response || data.message || data.result || 'No response received'
+      response: `I received your message: "${message}". However, I'm currently unable to connect to the AI service. Please try again later.`
     })
 
   } catch (error) {
