@@ -169,30 +169,22 @@ export default function DashboardPage() {
     }
   }, [user, hasShownWelcome])
 
-  // Check for existing session on mount - FIXED VERSION
+  // Check for existing session on mount - OPTIMIZED VERSION
   useEffect(() => {
     const checkUser = async () => {
       setIsAuthChecking(true)
       try {
-        const { data: { session }, error } = await supabase.auth.getSession()
-        
-        if (error) {
-          console.error("Session error:", error)
-          throw error
-        }
+        const { data: { session } } = await supabase.auth.getSession()
         
         if (!session) {
-          console.log("No session found, redirecting to login")
           router.push('/login')
           return
         }
         
-        console.log("Session found for user:", session.user.email)
         setUser(session.user)
         await fetchDashboardData()
         
       } catch (error) {
-        console.error("Auth error:", error)
         router.push('/login')
       } finally {
         setIsAuthChecking(false)
