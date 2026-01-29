@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 28, "column": 0}, "map": {"version":3,"sources":["file:///Users/midnight/Downloads/callaback-dashboard-main/components/theme-provider.tsx"],"sourcesContent":["//components/theme-provider.tsx\n\n'use client'\n\nimport * as React from 'react'\nimport {\n  ThemeProvider as NextThemesProvider,\n  type ThemeProviderProps,\n} from 'next-themes'\n\nexport function ThemeProvider({ children, ...props }: ThemeProviderProps) {\n  return <NextThemesProvider {...props}>{children}</NextThemesProvider>\n}\n"],"names":[],"mappings":"AAAA,+BAA+B;;;;;;AAK/B;AAHA;;;AAQO,SAAS,cAAc,EAAE,QAAQ,EAAE,GAAG,OAA2B;IACtE,qBAAO,8WAAC,ySAAkB;QAAE,GAAG,KAAK;kBAAG;;;;;;AACzC"}}]
-}

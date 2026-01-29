@@ -1,4 +1,0 @@
-{
-  "/api/twilio/token/route": "app/api/twilio/token/route.js",
-  "/page": "app/page.js"
-}

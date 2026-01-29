@@ -608,7 +608,6 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       <Toaster position="top-center" richColors />
-      <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCDSlhoto3IzP2P9IGKMP2JrRy5dRO5Frg&libraries=maps,places"></script>
       
       {/* Header with Phone Number */}
       <header className="border-b border-slate-200 bg-white/80 backdrop-blur-xl sticky top-0 z-50 shadow-sm overflow-hidden">
@@ -837,18 +836,47 @@ export default function DashboardPage() {
 
                 {/* Quick Contact Search */}
                 <div className="mb-3">
-                  <Input
-                    placeholder="Search contacts..."
-                    className="text-xs h-8"
-                    onChange={(e) => {
-                      const query = e.target.value.toLowerCase()
-                      const filtered = contacts.filter(c => 
-                        c.name.toLowerCase().includes(query) || c.phone.includes(query)
-                      )
-                      // Show filtered contacts in a simple way
-                    }}
-                  />
-                  <div className="mt-1 max-h-[80px] overflow-y-auto space-y-1">
+                  <div className="flex gap-2 mb-1">
+                    <Input
+                      placeholder="Search contacts..."
+                      className="text-xs h-8"
+                      onChange={(e) => {
+                        const query = e.target.value.toLowerCase()
+                        const filtered = contacts.filter(c => 
+                          c.name.toLowerCase().includes(query) || c.phone.includes(query)
+                        )
+                      }}
+                    />
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-8 px-2 text-xs"
+                      onClick={async () => {
+                        if (!phoneNumber.trim()) {
+                          toast.error("Enter a phone number first")
+                          return
+                        }
+                        try {
+                          const { error } = await supabase
+                            .from("contacts")
+                            .insert({
+                              name: `Contact ${new Date().toLocaleTimeString()}`,
+                              phone: phoneNumber,
+                              created_at: new Date().toISOString()
+                            })
+                          if (error) throw error
+                          toast.success("Contact saved")
+                          await fetchDashboardData()
+                        } catch (error) {
+                          console.error("Error saving contact:", error)
+                          toast.error("Failed to save contact")
+                        }
+                      }}
+                    >
+                      Save
+                    </Button>
+                  </div>
+                  <div className="max-h-[80px] overflow-y-auto space-y-1">
                     {contacts.slice(0, 3).map(contact => (
                       <button
                         key={contact.id}
