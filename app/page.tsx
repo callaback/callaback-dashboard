@@ -34,12 +34,13 @@ import { useRouter } from 'next/navigation'
 import { ContactsManager } from "@/components/contacts-manager"
 import { SyncChat } from "@/components/sync-chat"
 import { NotesLeadsPanel } from "@/components/notes-leads-panel"
-import { CallbackCalendar } from "@/components/callback-calendar"
 import { FileManager } from "@/components/file-manager"
 import { LocalMaps } from "@/components/local-maps"
 import { AIChat } from "@/components/ai-chat"
 import { TextToImage } from "@/components/text-to-image"
 import { useConfetti } from "@/hooks/useConfetti"
+import { LazyInteractionsPanel, LazyCallbackCalendar, LazyStorageDropzone } from "@/components/lazy-components"
+import { DashboardSkeleton } from "@/components/dashboard-skeleton"
 
 // YOUR PHONE NUMBER
 const YOUR_PHONE_NUMBER = "18444073511" // (844) 407-3511
@@ -237,36 +238,37 @@ export default function DashboardPage() {
   const fetchDashboardData = useCallback(async () => {
     setIsLoading(true)
     try {
-      // Fetch recent interactions
-      const { data: interactionsData } = await supabase
-        .from("interactions")
-        .select(`
-          *,
-          contacts (name, phone),
-          clients (name)
-        `)
-        .order("created_at", { ascending: false })
-        .limit(20)
+      // Fetch all data in parallel for better performance
+      const [interactionsResult, leadsResult, contactsResult] = await Promise.all([
+        supabase
+          .from("interactions")
+          .select(`
+            *,
+            contacts (name, phone),
+            clients (name)
+          `)
+          .order("created_at", { ascending: false })
+          .limit(20),
+        supabase
+          .from("leads")
+          .select("*")
+          .order("created_at", { ascending: false })
+          .limit(8),
+        supabase
+          .from("contacts")
+          .select("*")
+          .order("created_at", { ascending: false })
+          .limit(12)
+      ])
 
-      if (interactionsData) setInteractions(interactionsData)
+      const interactionsData = interactionsResult.data || []
+      const leadsData = leadsResult.data || []
+      const contactsData = contactsResult.data || []
 
-      const { data: leadsData } = await supabase
-        .from("leads")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(8)
-
-      if (leadsData) setLeads(leadsData)
-
-      const { data: contactsData } = await supabase
-        .from("contacts")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(12)
-
-      if (contactsData) setContacts(contactsData)
-
-      calculateMetrics(interactionsData || [], leadsData || [])
+      setInteractions(interactionsData)
+      setLeads(leadsData)
+      setContacts(contactsData)
+      calculateMetrics(interactionsData, leadsData)
 
       setNotifications([
         { id: 1, type: "warning", message: "3 missed calls need follow-up", time: "5 min ago" },
@@ -598,17 +600,19 @@ export default function DashboardPage() {
   }
 
   // IMPROVED LOADING STATE
-  if (isLoading || isAuthChecking) {
+  if (isAuthChecking) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50">
         <div className="text-center space-y-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-cyan-600 border-t-transparent mx-auto" />
-          <p className="text-muted-foreground font-medium">
-            {isAuthChecking ? "Checking authentication..." : "Loading callaback API..."}
-          </p>
+          <p className="text-muted-foreground font-medium">Checking authentication...</p>
         </div>
       </div>
     )
+  }
+
+  if (isLoading) {
+    return <DashboardSkeleton />
   }
 
   return (
@@ -1049,7 +1053,7 @@ export default function DashboardPage() {
           <div className="lg:col-span-4 flex flex-col gap-3">
             {/* Callback Calendar - Takes more space */}
             <div className="h-[550px]">
-              <CallbackCalendar />
+              <LazyCallbackCalendar />
             </div>
             
             {/* Notes/AI Tools Panel - Takes remaining space */}
