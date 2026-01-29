@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { cn, formatPhoneNumber as formatPhoneNumberUtil, formatDuration as formatDurationUtil } from "@/lib/utils"
 import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
+import { useConfetti } from "@/hooks/useConfetti"
 
 interface Contact {
   id: string
@@ -51,8 +52,12 @@ export function PhoneDialer({
   const [isLoadingContacts, setIsLoadingContacts] = useState(false)
   const [showAddContact, setShowAddContact] = useState(false)
   const [newContactName, setNewContactName] = useState("")
+  const [showConfetti, setShowConfetti] = useState(false)
 
   const supabase = createClient()
+
+  // Use confetti hook
+  useConfetti(showConfetti)
 
   // Use external call state if provided, otherwise internal state
   const isCallActive = externalIsCallActive !== undefined ? externalIsCallActive : false
@@ -181,6 +186,8 @@ export function PhoneDialer({
       if (error) throw error
 
       toast.success(`Contact ${newContactName} saved`)
+      setShowConfetti(true)
+      setTimeout(() => setShowConfetti(false), 100)
       setNewContactName("")
       setShowAddContact(false)
       

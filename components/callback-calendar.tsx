@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { toast } from "sonner"
 import { createClient } from "@/lib/supabase/client"
+import { useConfetti } from "@/hooks/useConfetti"
 
 interface Booking {
   id: string
@@ -33,7 +34,11 @@ export function CallbackCalendar() {
   const [phoneNumber, setPhoneNumber] = useState("")
   const [newTodo, setNewTodo] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [showConfetti, setShowConfetti] = useState(false)
   const supabase = createClient()
+
+  // Use confetti hook
+  useConfetti(showConfetti)
 
   // Time slots (15-min intervals, 9 AM to 5 PM)
   const timeSlots = Array.from({ length: 32 }, (_, i) => {
@@ -88,6 +93,8 @@ export function CallbackCalendar() {
         setNewTodo("")
         loadTodos()
         toast.success("Todo added")
+        setShowConfetti(true)
+        setTimeout(() => setShowConfetti(false), 100)
       }
     } catch (error) {
       console.error("Error adding todo:", error)
@@ -118,6 +125,8 @@ export function CallbackCalendar() {
       if (response.ok) {
         loadTodos()
         toast.success("Todo deleted")
+        setShowConfetti(true)
+        setTimeout(() => setShowConfetti(false), 100)
       }
     } catch (error) {
       console.error("Error deleting todo:", error)
@@ -170,6 +179,8 @@ export function CallbackCalendar() {
       }
 
       toast.success(`Callback booked for ${selectedDate} at ${selectedTime}`)
+      setShowConfetti(true)
+      setTimeout(() => setShowConfetti(false), 100)
       setPhoneNumber("")
       // Keep selections visible to show the booking was successful
       // setSelectedDate(null)
@@ -193,6 +204,8 @@ export function CallbackCalendar() {
       if (error) throw error
 
       toast.success("Booking cancelled")
+      setShowConfetti(true)
+      setTimeout(() => setShowConfetti(false), 100)
       loadBookings()
     } catch (error) {
       console.error("Error cancelling booking:", error)

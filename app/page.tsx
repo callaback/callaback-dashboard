@@ -37,6 +37,7 @@ import { NotesLeadsPanel } from "@/components/notes-leads-panel"
 import { CallbackCalendar } from "@/components/callback-calendar"
 import { FileManager } from "@/components/file-manager"
 import { LocalMaps } from "@/components/local-maps"
+import { useConfetti } from "@/hooks/useConfetti"
 
 // YOUR PHONE NUMBER
 const YOUR_PHONE_NUMBER = "18444073511" // (844) 407-3511
@@ -129,6 +130,10 @@ export default function DashboardPage() {
   const [isPdfLoading, setIsPdfLoading] = useState(false)
   const [generatedPdfUrl, setGeneratedPdfUrl] = useState<string | null>(null)
   const [pdfError, setPdfError] = useState<string | null>(null)
+  const [showConfetti, setShowConfetti] = useState(false)
+
+  // Use confetti hook
+  useConfetti(showConfetti)
 
   // Update clock every second
   useEffect(() => {
@@ -439,6 +444,8 @@ export default function DashboardPage() {
       // Clear inputs
       setSmsMessage("")
       toast.success("SMS sent successfully")
+      setShowConfetti(true)
+      setTimeout(() => setShowConfetti(false), 100)
       
       // Refresh data
       fetchDashboardData()

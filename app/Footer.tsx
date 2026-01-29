@@ -10,6 +10,9 @@ export default function Footer() {
             <a href="/PrivacyPolicy.html" className="hover:text-emerald-600 transition-colors">
               Privacy
             </a>
+          <a href="https://github.com/callaback/callaback-dashboard" className="hover:text-emerald-600 transition-colors">
+            GitHub
+          </a>
             <a href="/MITlicense.html" className="hover:text-emerald-600 transition-colors">
               License
             </a>
