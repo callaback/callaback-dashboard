@@ -525,25 +525,30 @@ export default function DashboardPage() {
   const handleLogout = async () => {
     try {
       console.log("Logging out...")
-      await supabase.auth.signOut()
       
-      console.log("Logout successful")
-      
-      // Clear local state
+      // Clear local state first
       setUser(null)
       setInteractions([])
       setLeads([])
       setContacts([])
       setMetrics([])
       
-      // Redirect to login
-      router.push('/login')
+      // Sign out from Supabase
+      const { error } = await supabase.auth.signOut()
+      if (error) {
+        console.error("Supabase signout error:", error)
+      }
+      
+      console.log("Logout successful")
       toast.success("Logged out successfully")
+      
+      // Force redirect
+      window.location.href = '/login'
       
     } catch (error) {
       console.error("Logout exception:", error)
       // Force redirect anyway
-      router.push('/login')
+      window.location.href = '/login'
     }
   }
 
@@ -648,9 +653,13 @@ export default function DashboardPage() {
             
             {/* Enhanced Right Side - Clock & User */}
             <div className="flex items-center gap-3">
-              {/* Enhanced Live Clock */}
-              <div className="hidden md:flex items-center gap-3 px-4 py-2.5 bg-gradient-to-br from-cyan-50 to-blue-50 rounded-xl border-2 border-cyan-200 shadow-md">
-                <div className="text-right">
+              {/* Enhanced Live Clock with Animated Gradient */}
+              <div className="hidden md:flex items-center gap-3 px-4 py-2.5 bg-gradient-to-br from-cyan-50 via-blue-50 to-purple-50 rounded-xl border-2 border-cyan-200 shadow-md relative overflow-hidden">
+                {/* Animated background */}
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-100/50 via-blue-100/50 to-purple-100/50 animate-pulse opacity-60"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/20 to-transparent animate-bounce opacity-30" style={{animationDuration: '3s'}}></div>
+                
+                <div className="text-right relative z-10">
                   <p className="text-xl font-mono font-bold tracking-tight text-slate-800 tabular-nums">
                     {currentTime.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false })}
                   </p>
@@ -658,7 +667,7 @@ export default function DashboardPage() {
                     {currentTime.toLocaleDateString("en-GB", { weekday: "short", day: "2-digit", month: "short", year: "numeric" })}
                   </p>
                 </div>
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse relative z-10" />
               </div>
               
               {/* User Profile */}

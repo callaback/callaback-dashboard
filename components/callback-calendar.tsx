@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ChevronLeft, ChevronRight, Phone, Clock, X } from "lucide-react"
+import { ChevronLeft, ChevronRight, Phone, Clock, X, CheckSquare } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -17,12 +17,21 @@ interface Booking {
   created_at: string
 }
 
+interface Todo {
+  id: string
+  text: string
+  completed: boolean
+}
+
 export function CallbackCalendar() {
+  const [activeTab, setActiveTab] = useState<"calendar" | "todos">("calendar")
   const [currentDate, setCurrentDate] = useState(new Date())
   const [bookings, setBookings] = useState<Booking[]>([])
+  const [todos, setTodos] = useState<Todo[]>([])
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [selectedTime, setSelectedTime] = useState<string | null>(null)
   const [phoneNumber, setPhoneNumber] = useState("")
+  const [newTodo, setNewTodo] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const supabase = createClient()
 
@@ -33,10 +42,13 @@ export function CallbackCalendar() {
     return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`
   })
 
-  // Load bookings
+  // Load bookings and todos
   useEffect(() => {
     loadBookings()
-  }, [])
+    if (activeTab === "todos") {
+      loadTodos()
+    }
+  }, [activeTab])
 
   const loadBookings = async () => {
     try {
@@ -49,6 +61,67 @@ export function CallbackCalendar() {
       setBookings(data || [])
     } catch (error) {
       console.error("Error loading bookings:", error)
+    }
+  }
+
+  const loadTodos = async () => {
+    try {
+      const response = await fetch("https://to-do-list-kv.callaback.workers.dev")
+      const data = await response.json()
+      setTodos(data || [])
+    } catch (error) {
+      console.error("Error loading todos:", error)
+    }
+  }
+
+  const addTodo = async () => {
+    if (!newTodo.trim()) return
+    
+    try {
+      const response = await fetch("https://to-do-list-kv.callaback.workers.dev", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: newTodo })
+      })
+      
+      if (response.ok) {
+        setNewTodo("")
+        loadTodos()
+        toast.success("Todo added")
+      }
+    } catch (error) {
+      console.error("Error adding todo:", error)
+      toast.error("Failed to add todo")
+    }
+  }
+
+  const toggleTodo = async (id: string) => {
+    try {
+      const response = await fetch(`https://to-do-list-kv.callaback.workers.dev/${id}`, {
+        method: "PUT"
+      })
+      
+      if (response.ok) {
+        loadTodos()
+      }
+    } catch (error) {
+      console.error("Error toggling todo:", error)
+    }
+  }
+
+  const deleteTodo = async (id: string) => {
+    try {
+      const response = await fetch(`https://to-do-list-kv.callaback.workers.dev/${id}`, {
+        method: "DELETE"
+      })
+      
+      if (response.ok) {
+        loadTodos()
+        toast.success("Todo deleted")
+      }
+    } catch (error) {
+      console.error("Error deleting todo:", error)
+      toast.error("Failed to delete todo")
     }
   }
 
@@ -98,8 +171,9 @@ export function CallbackCalendar() {
 
       toast.success(`Callback booked for ${selectedDate} at ${selectedTime}`)
       setPhoneNumber("")
-      setSelectedDate(null)
-      setSelectedTime(null)
+      // Keep selections visible to show the booking was successful
+      // setSelectedDate(null)
+      // setSelectedTime(null)
       await loadBookings()
     } catch (error) {
       console.error("Error booking callback:", error)
@@ -136,13 +210,43 @@ export function CallbackCalendar() {
   return (
     <Card className="h-full flex flex-col overflow-hidden">
       <CardHeader className="pb-3 flex-shrink-0">
-        <CardTitle className="text-sm flex items-center gap-2">
-          <Phone className="h-4 w-4 text-primary" />
-          Callback Bookings
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-sm flex items-center gap-2">
+            {activeTab === "calendar" ? (
+              <>
+                <Phone className="h-4 w-4 text-primary" />
+                Callback Bookings
+              </>
+            ) : (
+              <>
+                <CheckSquare className="h-4 w-4 text-primary" />
+                Todos
+              </>
+            )}
+          </CardTitle>
+          <div className="flex gap-1">
+            <Button
+              variant={activeTab === "calendar" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setActiveTab("calendar")}
+              className="text-xs"
+            >
+              Calendar
+            </Button>
+            <Button
+              variant={activeTab === "todos" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setActiveTab("todos")}
+              className="text-xs"
+            >
+              TODOS
+            </Button>
+          </div>
+        </div>
       </CardHeader>
       <CardContent className="flex-1 overflow-y-auto p-4">
-        <div className="space-y-3">
+        {activeTab === "calendar" ? (
+          <div className="space-y-3">
             {/* Calendar */}
             <div className="border rounded-lg p-3 bg-slate-50 dark:bg-slate-800 dark:border-slate-700">
               {/* Month Navigation */}
@@ -295,6 +399,51 @@ export function CallbackCalendar() {
               </div>
             </div>
         </div>
+        ) : (
+          <div className="space-y-3">
+            <div className="border rounded-lg p-3 bg-slate-50 dark:bg-slate-800 dark:border-slate-700">
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Add a new todo..."
+                  value={newTodo}
+                  onChange={(e) => setNewTodo(e.target.value)}
+                  onKeyPress={(e) => e.key === "Enter" && addTodo()}
+                  className="text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
+                />
+                <Button size="sm" onClick={addTodo}>
+                  Add
+                </Button>
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              {todos.map(todo => (
+                <div key={todo.id} className="flex items-center gap-2 p-2 bg-white dark:bg-slate-700 rounded border dark:border-slate-600">
+                  <input
+                    type="checkbox"
+                    checked={todo.completed}
+                    onChange={() => toggleTodo(todo.id)}
+                    className="rounded"
+                  />
+                  <span className={`flex-1 text-sm ${todo.completed ? "line-through text-muted-foreground" : "dark:text-slate-100"}`}>
+                    {todo.text}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6"
+                    onClick={() => deleteTodo(todo.id)}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              ))}
+              {todos.length === 0 && (
+                <p className="text-xs text-muted-foreground dark:text-slate-400 text-center py-4">No todos yet</p>
+              )}
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   )

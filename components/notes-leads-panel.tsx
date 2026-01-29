@@ -93,7 +93,10 @@ export function NotesLeadsPanel() {
         <Textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          placeholder="Write your notes here... They auto-save to your browser."
+          placeholder="// metrics multiplyer<br>
+          1. positive outcome 15min call session
+          2. creating a contact
+          3. explain and demo product (use) case"
           className="flex-1 resize-none"
         />
 

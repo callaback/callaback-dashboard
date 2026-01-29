@@ -1,12 +1,14 @@
 "use client"
 
 import { useState, useCallback, useEffect } from "react"
-import { Phone, PhoneOff, Mic, MicOff, Volume2, VolumeX, Delete, User } from "lucide-react"
+import { Phone, PhoneOff, Mic, MicOff, Volume2, VolumeX, Delete, User, UserPlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
 import { cn, formatPhoneNumber as formatPhoneNumberUtil, formatDuration as formatDurationUtil } from "@/lib/utils"
 import { createClient } from "@/lib/supabase/client"
+import { toast } from "sonner"
 
 interface Contact {
   id: string
@@ -47,6 +49,8 @@ export function PhoneDialer({
   const [callInterval, setCallInterval] = useState<NodeJS.Timeout | null>(null)
   const [recentCalls, setRecentCalls] = useState<Contact[]>([])
   const [isLoadingContacts, setIsLoadingContacts] = useState(false)
+  const [showAddContact, setShowAddContact] = useState(false)
+  const [newContactName, setNewContactName] = useState("")
 
   const supabase = createClient()
 
@@ -158,6 +162,39 @@ export function PhoneDialer({
     onSelectContact?.(contact)
   }
 
+  const handleSaveContact = async () => {
+    if (!newContactName.trim() || !phoneNumber.trim()) {
+      toast.error("Please enter both name and phone number")
+      return
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from("contacts")
+        .insert({
+          name: newContactName.trim(),
+          phone: phoneNumber,
+          created_at: new Date().toISOString()
+        })
+        .select()
+
+      if (error) throw error
+
+      toast.success(`Contact ${newContactName} saved`)
+      setNewContactName("")
+      setShowAddContact(false)
+      
+      // Refresh contacts if callback provided
+      if (data && data[0]) {
+        const newContact = data[0] as Contact
+        setRecentCalls(prev => [newContact, ...prev])
+      }
+    } catch (error) {
+      console.error("Error saving contact:", error)
+      toast.error("Failed to save contact")
+    }
+  }
+
   // Determine matching contact
   const matchingContact = contacts.find(
     (c) => c.phone.replace(/\D/g, "") === phoneNumber.replace(/\D/g, "")
@@ -237,50 +274,106 @@ export function PhoneDialer({
               <div className="text-2xl font-mono tracking-wider min-h-[2rem]">
                 {formatPhoneNumberUtil(phoneNumber) || "Enter number"}
               </div>
+              
+              {/* Add Contact Button */}
+              {phoneNumber && !matchingContact && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="mt-2 text-xs"
+                  onClick={() => setShowAddContact(true)}
+                >
+                  <UserPlus className="h-3 w-3 mr-1" />
+                  Save as Contact
+                </Button>
+              )}
             </div>
           )}
         </div>
 
-        {/* Quick Contacts */}
-        {!isCallActive && allContacts.length > 0 && (
+        {/* Contacts List */}
+        {!isCallActive && (
           <div className="mb-4">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-xs text-muted-foreground uppercase tracking-wider">Quick Dial</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Contacts</p>
               <Badge variant="outline" className="text-[10px]">
-                {allContacts.length} contacts
+                {allContacts.length}
               </Badge>
             </div>
-            <div className="flex flex-wrap gap-1">
-              {allContacts.slice(0, 6).map((contact) => (
+            <div className="max-h-32 overflow-y-auto space-y-1">
+              {allContacts.map((contact) => (
                 <Button
                   key={contact.id}
-                  variant="outline"
-                  size="sm"
+                  variant="ghost"
                   className={cn(
-                    "text-xs h-7 px-2 transition-all",
+                    "w-full justify-start text-xs h-8 px-2",
                     contact.phone.replace(/\D/g, "") === phoneNumber.replace(/\D/g, "") 
-                      ? "bg-primary/10 border-primary text-primary" 
-                      : "bg-transparent"
+                      ? "bg-primary/10 text-primary" 
+                      : ""
                   )}
                   onClick={() => handleContactSelect(contact)}
                 >
-                  <User className="h-3 w-3 mr-1" />
-                  {contact.name.split(" ")[0]}
+                  <User className="h-3 w-3 mr-2" />
+                  <div className="flex-1 text-left">
+                    <div className="font-medium">{contact.name}</div>
+                    <div className="text-muted-foreground">{formatPhoneNumberUtil(contact.phone)}</div>
+                  </div>
                 </Button>
               ))}
-              {allContacts.length > 6 && (
+              {allContacts.length === 0 && (
+                <div className="text-center py-4 text-xs text-muted-foreground">
+                  No contacts yet
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Add Contact Modal */}
+        {showAddContact && (
+          <div className="mb-4 p-3 border rounded-lg bg-secondary/50">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-medium">Save Contact</p>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setShowAddContact(false)
+                  setNewContactName("")
+                }}
+              >
+                ×
+              </Button>
+            </div>
+            <div className="space-y-2">
+              <Input
+                placeholder="Contact name"
+                value={newContactName}
+                onChange={(e) => setNewContactName(e.target.value)}
+                className="text-sm"
+              />
+              <div className="text-xs text-muted-foreground">
+                Phone: {formatPhoneNumberUtil(phoneNumber)}
+              </div>
+              <div className="flex gap-2">
                 <Button
-                  variant="ghost"
                   size="sm"
-                  className="text-xs h-7 px-2"
+                  onClick={handleSaveContact}
+                  className="flex-1"
+                >
+                  Save Contact
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => {
-                    // Show all contacts modal
-                    console.log("Show all contacts")
+                    setShowAddContact(false)
+                    setNewContactName("")
                   }}
                 >
-                  +{allContacts.length - 6}
+                  Cancel
                 </Button>
-              )}
+              </div>
             </div>
           </div>
         )}
