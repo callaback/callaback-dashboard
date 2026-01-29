@@ -37,6 +37,8 @@ import { NotesLeadsPanel } from "@/components/notes-leads-panel"
 import { CallbackCalendar } from "@/components/callback-calendar"
 import { FileManager } from "@/components/file-manager"
 import { LocalMaps } from "@/components/local-maps"
+import { AIChat } from "@/components/ai-chat"
+import { TextToImage } from "@/components/text-to-image"
 import { useConfetti } from "@/hooks/useConfetti"
 
 // YOUR PHONE NUMBER
@@ -1050,9 +1052,32 @@ export default function DashboardPage() {
               <CallbackCalendar />
             </div>
             
-            {/* Notes/Leads Panel - Takes remaining space */}
+            {/* Notes/AI Tools Panel - Takes remaining space */}
             <div className="h-[480px]">
-              <NotesLeadsPanel />
+              <Tabs defaultValue="notes" className="h-full flex flex-col">
+                <div className="shrink-0 px-6 pt-6 pb-3">
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="notes">Notes</TabsTrigger>
+                    <TabsTrigger value="ai-chat">AI Chat</TabsTrigger>
+                    <TabsTrigger value="text-to-image">AI Image</TabsTrigger>
+                  </TabsList>
+                </div>
+                <TabsContent value="notes" className="flex-1 px-6 pb-6 mt-0">
+                  <div className="h-full">
+                    <NotesLeadsPanel />
+                  </div>
+                </TabsContent>
+                <TabsContent value="ai-chat" className="flex-1 px-6 pb-6 mt-0">
+                  <div className="h-full">
+                    <AIChat />
+                  </div>
+                </TabsContent>
+                <TabsContent value="text-to-image" className="flex-1 px-6 pb-6 mt-0">
+                  <div className="h-full">
+                    <TextToImage />
+                  </div>
+                </TabsContent>
+              </Tabs>
             </div>
           </div>
         </div>
