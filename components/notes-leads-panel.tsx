@@ -125,10 +125,8 @@ export function NotesLeadsPanel() {
         <Textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          placeholder="// metrics multiplyer<br>
-          1. positive outcome 15min call session
-          2. creating a contact
-          3. explain and demo product (use) case"
+          placeholder="// Notes and Todos
+       "
           className="flex-1 resize-none"
         />
 

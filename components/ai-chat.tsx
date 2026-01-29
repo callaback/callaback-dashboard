@@ -27,6 +27,7 @@ export function AIChat() {
     }
 
     setMessages(prev => [...prev, userMessage])
+    const currentInput = input
     setInput("")
     setIsLoading(true)
 
@@ -34,7 +35,7 @@ export function AIChat() {
       const response = await fetch('/api/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: input })
+        body: JSON.stringify({ message: currentInput })
       })
 
       const data = await response.json()
@@ -47,6 +48,7 @@ export function AIChat() {
 
       setMessages(prev => [...prev, assistantMessage])
     } catch (error) {
+      console.error('Chat error:', error)
       const errorMessage: Message = {
         role: 'assistant',
         content: 'Error connecting to AI service. Please try again.',

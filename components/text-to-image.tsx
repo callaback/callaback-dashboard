@@ -31,15 +31,23 @@ export function TextToImage() {
       })
 
       if (response.ok) {
-        const blob = await response.blob()
-        const imageUrl = URL.createObjectURL(blob)
-        setGeneratedImage(imageUrl)
+        const contentType = response.headers.get('content-type')
+        
+        if (contentType && contentType.includes('image')) {
+          const blob = await response.blob()
+          const imageUrl = URL.createObjectURL(blob)
+          setGeneratedImage(imageUrl)
+        } else {
+          // Handle JSON error response
+          const errorData = await response.json()
+          throw new Error(errorData.error || 'Failed to generate image')
+        }
       } else {
-        throw new Error('Failed to generate image')
+        throw new Error(`HTTP ${response.status}: Failed to generate image`)
       }
     } catch (error) {
       console.error('Error generating image:', error)
-      alert('Failed to generate image. Please try again.')
+      alert(`Failed to generate image: ${error.message}. Please try again.`)
     } finally {
       setIsGenerating(false)
     }
