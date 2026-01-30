@@ -554,7 +554,8 @@ export default function DashboardPage() {
   // FIXED LOGOUT HANDLER
   const handleLogout = async () => {
     try {
-      console.log("Logging out...")
+      console.log("Logout button clicked...")
+      alert("Logging out...") // Debug alert
       
       // Clear local state first
       setUser(null)
@@ -573,12 +574,17 @@ export default function DashboardPage() {
       toast.success("Logged out successfully")
       
       // Force redirect
-      window.location.href = '/login'
+      setTimeout(() => {
+        window.location.href = '/login'
+      }, 500)
       
     } catch (error) {
       console.error("Logout exception:", error)
+      alert("Logout error: " + error.message) // Debug alert
       // Force redirect anyway
-      window.location.href = '/login'
+      setTimeout(() => {
+        window.location.href = '/login'
+      }, 500)
     }
   }
 
