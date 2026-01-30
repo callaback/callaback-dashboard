@@ -671,14 +671,14 @@ export default function DashboardPage() {
                   href="https://callaback.openstatus.dev/feed/rss"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-br from-orange-50 to-red-50 rounded-lg border border-orange-200 hover:border-orange-400 hover:shadow-md transition-all"
+                  className="flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-br from-green-50 to-blue-50 rounded-lg border border-green-200 hover:border-green-400 hover:shadow-md transition-all"
                   title="Subscribe to RSS Feed"
                 >
                   <svg className="h-4 w-4 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
                     <circle cx="6" cy="18" r="2" />
                     <path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16" stroke="currentColor" strokeWidth="2" fill="none" />
                   </svg>
-                  <span className="text-xs font-medium text-orange-700">Subscribe</span>
+                  <span className="text-xs font-medium text-cyan-700">Subscribe</span>
                 </a>
                 
                 {/* Logout Button */}
