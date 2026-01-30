@@ -21,44 +21,27 @@ export default function LoginPage() {
   const [name, setName] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true)
+  const [isCheckingAuth, setIsCheckingAuth] = useState(false) // Start as false
   
   const supabase = createClient()
   const router = useRouter()
 
-  // Check if user is already logged in - FIXED VERSION
+  // Check if user is already logged in - SIMPLIFIED
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession()
-        
-        if (error) {
-          console.error("Session check error:", error)
-        }
+        const { data: { session } } = await supabase.auth.getSession()
         
         // If there's a valid session, redirect to dashboard
         if (session?.user) {
-          console.log("User already logged in, redirecting to dashboard")
-          router.replace('/') // Use replace instead of push to prevent back button issues
-          return
+          router.replace('/')
         }
-        
-        console.log("No active session, showing login page")
       } catch (error) {
         console.error("Error checking session:", error)
-      } finally {
-        setIsCheckingAuth(false)
       }
     }
 
     checkSession()
-
-    // Fallback timeout to prevent infinite loading
-    const timeout = setTimeout(() => {
-      setIsCheckingAuth(false)
-    }, 3000)
-
-    return () => clearTimeout(timeout)
   }, [router, supabase])
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -156,18 +139,7 @@ export default function LoginPage() {
     }
   }
 
-  // Show loading state while checking auth
-  if (isCheckingAuth) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50">
-        <div className="text-center space-y-4">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-cyan-600 border-t-transparent mx-auto" />
-          <p className="text-muted-foreground font-medium">callaback node startup...</p>
-        </div>
-      </div>
-    )
-  }
-
+  // No loading screen - show login form immediately
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 p-4">
       <Toaster position="top-left" richColors />

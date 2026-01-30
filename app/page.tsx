@@ -105,7 +105,7 @@ export default function DashboardPage() {
   const router = useRouter()
   const supabase = createClient()
   const [activeTab, setActiveTab] = useState("overview")
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false) // Start as false
   const [isAuthChecking, setIsAuthChecking] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [interactions, setInteractions] = useState<Interaction[]>([])
@@ -186,22 +186,15 @@ export default function DashboardPage() {
         }
         
         setUser(session.user)
-        setIsLoading(false) // Show UI immediately
         fetchDashboardData() // Load data in background
         
       } catch (error) {
         console.error('Auth check error:', error)
-        setIsLoading(false) // Still show UI even if auth fails
         router.push('/login')
       }
     }
     
     checkUser()
-
-    // Fallback timeout to prevent infinite loading
-    const timeout = setTimeout(() => {
-      setIsLoading(false)
-    }, 3000)
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -218,13 +211,11 @@ export default function DashboardPage() {
         } else if (event === 'SIGNED_IN' && session) {
           console.log("User signed in:", session.user.email)
           setUser(session.user)
-          setIsLoading(false)
         }
       }
     )
 
     return () => {
-      clearTimeout(timeout)
       subscription.unsubscribe()
     }
   }, []) // Only depend on router
@@ -608,9 +599,9 @@ export default function DashboardPage() {
     )
   }
 
-  // Show dashboard immediately, auth happens in background
-  if (isLoading) {
-    return <DashboardSkeleton />
+  // Show dashboard - no loading screen
+  if (!user) {
+    return null // Let the auth redirect handle it
   }
 
   return (
