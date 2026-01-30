@@ -599,9 +599,16 @@ export default function DashboardPage() {
     )
   }
 
-  // Show dashboard - no loading screen
+  // Show dashboard - redirect if no user
   if (!user) {
-    return null // Let the auth redirect handle it
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-cyan-600 border-t-transparent mx-auto mb-2" />
+          <p className="text-sm text-muted-foreground">Checking authentication...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
