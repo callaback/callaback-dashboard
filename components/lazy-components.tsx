@@ -5,7 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 // Lazy load heavy components
 const InteractionsPanel = lazy(() => import('@/components/interactions-panel'))
-const CallbackCalendar = lazy(() => import('@/components/callback-calendar'))
+const CallbackCalendar = lazy(() => import('@/components/callback-calendar').then(module => ({ default: module.CallbackCalendar })))
 const StorageDropzone = lazy(() => import('@/components/storage-dropezone'))
 
 export function LazyInteractionsPanel(props: any) {
