@@ -19,8 +19,14 @@ export default function Footer() {
             <a href="mailto:support@callaback.com" className="hover:text-emerald-600 transition-colors">
               Support
             </a>
+          <a href="https://callaback.openstatus.dev" className="hover:text-emerald-600 transition-colors">
+            Service Status
+          </a>
+          
+          
+          
             <a href="/TheTeam.html" className="hover:text-cyan-600 transition-colors">
-              The Team 🥚
+              The Team
             </a>
           </div>
         </div>

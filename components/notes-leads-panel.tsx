@@ -125,7 +125,7 @@ export function NotesLeadsPanel() {
         <Textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          placeholder="// Notes and Todos
+          placeholder="notepad plain text and markdown supported
        "
           className="flex-1 resize-none"
         />

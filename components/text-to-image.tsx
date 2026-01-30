@@ -69,7 +69,7 @@ export function TextToImage() {
       <CardHeader className="pb-3 shrink-0">
         <CardTitle className="text-lg flex items-center gap-2">
           <Image className="h-5 w-5" />
-          Text to Image
+          text to image AI
         </CardTitle>
       </CardHeader>
 
@@ -81,7 +81,7 @@ export function TextToImage() {
               id="prompt"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Describe the image you want to generate..."
+              placeholder="describe the image to generate..."
               className="resize-none"
               rows={3}
             />

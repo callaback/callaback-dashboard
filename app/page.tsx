@@ -664,6 +664,35 @@ export default function DashboardPage() {
             
             {/* Enhanced Right Side - Clock & User */}
             <div className="flex items-center gap-3">
+              {/* RSS & Logout Stack */}
+              <div className="hidden md:flex flex-col gap-2">
+                {/* RSS Feed Subscribe */}
+                <a
+                  href="https://callaback.openstatus.dev/feed/rss"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-br from-orange-50 to-red-50 rounded-lg border border-orange-200 hover:border-orange-400 hover:shadow-md transition-all"
+                  title="Subscribe to RSS Feed"
+                >
+                  <svg className="h-4 w-4 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
+                    <circle cx="6" cy="18" r="2" />
+                    <path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16" stroke="currentColor" strokeWidth="2" fill="none" />
+                  </svg>
+                  <span className="text-xs font-medium text-orange-700">Subscribe</span>
+                </a>
+                
+                {/* Logout Button */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleLogout}
+                  className="h-10 px-4 border-red-200 hover:border-red-500 hover:bg-red-50 text-slate-700 hover:text-red-700"
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </Button>
+              </div>
+              
               {/* Enhanced Live Clock with Animated Gradient */}
               <div className="hidden md:flex items-center gap-3 px-4 py-2.5 bg-gradient-to-br from-cyan-50 via-blue-50 to-purple-50 rounded-xl border-2 border-cyan-200 shadow-md relative overflow-hidden">
                 {/* Animated background */}
@@ -707,17 +736,6 @@ export default function DashboardPage() {
                 ) : (
                   <Moon className="h-4 w-4 text-slate-600" />
                 )}
-              </Button>
-              
-              {/* FIXED LOGOUT BUTTON */}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleLogout}
-                className="h-10 px-4 border-red-200 hover:border-red-500 hover:bg-red-50 text-slate-700 hover:text-red-700"
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Logout
               </Button>
             </div>
           </div>

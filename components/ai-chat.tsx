@@ -65,7 +65,7 @@ export function AIChat() {
       <CardHeader className="pb-3 shrink-0">
         <CardTitle className="text-lg flex items-center gap-2">
           <MessageCircle className="h-5 w-5" />
-          AI Chat
+          AI Chat LLM
         </CardTitle>
       </CardHeader>
 
@@ -73,7 +73,7 @@ export function AIChat() {
         <div className="flex-1 overflow-y-auto space-y-3 min-h-0">
           {messages.length === 0 ? (
             <div className="text-center text-muted-foreground py-8">
-              Start a conversation with the AI assistant
+              Callaback AI assistant
             </div>
           ) : (
             messages.map((message, index) => (
