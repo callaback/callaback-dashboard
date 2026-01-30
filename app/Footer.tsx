@@ -17,10 +17,10 @@ export default function Footer() {
               License
             </a>
             <a href="mailto:support@callaback.com" className="hover:text-emerald-600 transition-colors">
-              Support
+            Support
             </a>
           <a href="https://callaback.openstatus.dev" className="hover:text-emerald-600 transition-colors">
-            Service Status
+            Service
           </a>
           
           

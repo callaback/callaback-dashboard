@@ -72,17 +72,17 @@ export function LocalMaps({ onSelectBusiness }: { onSelectBusiness: (phone: stri
         />
 
         {businesses.length > 0 && (
-          <div className="border-t pt-2 max-h-[150px] overflow-y-auto">
-            <p className="text-xs font-semibold mb-2">Results</p>
-            <div className="space-y-1">
+          <div className="border-t pt-3 flex-1 overflow-hidden flex flex-col">
+            <p className="text-xs font-semibold mb-2 text-slate-700 dark:text-slate-300">Results ({businesses.length})</p>
+            <div className="space-y-2 overflow-y-auto flex-1">
               {businesses.map((business, idx) => (
-                <div key={idx} className="text-xs p-2 bg-slate-50 dark:bg-slate-800 rounded border">
-                  <p className="font-medium">{business.name}</p>
-                  <p className="text-muted-foreground text-[10px]">{business.address}</p>
+                <div key={idx} className="text-xs p-3 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-slate-800 dark:to-slate-700 rounded-lg border border-blue-200 dark:border-slate-600 hover:shadow-md transition-shadow">
+                  <p className="font-semibold text-slate-900 dark:text-white">{business.name}</p>
+                  <p className="text-muted-foreground text-[11px] mt-1">{business.address}</p>
                   <Button
                     size="sm"
-                    variant="ghost"
-                    className="h-6 mt-1 gap-1"
+                    variant="outline"
+                    className="h-7 mt-2 gap-1 w-full text-xs"
                     onClick={() => {
                       onSelectBusiness(business.phone)
                       toast.success(`Added ${business.phone}`)

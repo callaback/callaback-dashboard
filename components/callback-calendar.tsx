@@ -165,32 +165,48 @@ export function CallbackCalendar() {
 
     setIsLoading(true)
     try {
+      // Add timeout
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 10000)
+
       const { data, error } = await supabase
         .from("callback_bookings")
         .insert({
           date: selectedDate,
           time: selectedTime,
-          phone: phoneNumber,
-          created_at: new Date().toISOString()
+          phone: phoneNumber
         })
         .select()
 
+      clearTimeout(timeoutId)
+
       if (error) {
-        console.error("Supabase error:", error)
-        throw error
+        console.error("Supabase error details:", {
+          message: error.message,
+          code: error.code,
+          details: error.details,
+          hint: error.hint
+        })
+        throw new Error(error.message || "Failed to save booking")
+      }
+
+      if (!data) {
+        throw new Error("No data returned from insert")
       }
 
       toast.success(`Callback booked for ${selectedDate} at ${selectedTime}`)
       setShowConfetti(true)
       setTimeout(() => setShowConfetti(false), 100)
       setPhoneNumber("")
-      // Keep selections visible to show the booking was successful
-      // setSelectedDate(null)
-      // setSelectedTime(null)
       await loadBookings()
     } catch (error) {
       console.error("Error booking callback:", error)
-      toast.error(`Failed to book callback: ${error instanceof Error ? error.message : "Unknown error"}`)
+      if (error instanceof Error && error.name === 'AbortError') {
+        toast.error("Request timeout - check your connection")
+      } else {
+        const errorMsg = error instanceof Error ? error.message : "Unknown error"
+        toast.error(`Failed to book callback: ${errorMsg}`)
+      }
     } finally {
       setIsLoading(false)
     }
