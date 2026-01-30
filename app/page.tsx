@@ -184,7 +184,8 @@ export default function DashboardPage() {
         }
         
         setUser(session.user)
-        await fetchDashboardData()
+        setIsLoading(false) // Show UI immediately
+        fetchDashboardData() // Load data in background
         
       } catch (error) {
         router.push('/login')
@@ -233,19 +234,23 @@ export default function DashboardPage() {
   ]
 
   const fetchDashboardData = useCallback(async () => {
-    setIsLoading(true)
     try {
-      // Fetch all data in parallel for better performance
-      const [interactionsResult, leadsResult, contactsResult] = await Promise.all([
-        supabase
-          .from("interactions")
-          .select(`
-            *,
-            contacts (name, phone),
-            clients (name)
-          `)
-          .order("created_at", { ascending: false })
-          .limit(20),
+      // Fetch interactions first (most important)
+      const interactionsResult = await supabase
+        .from("interactions")
+        .select(`
+          *,
+          contacts (name, phone),
+          clients (name)
+        `)
+        .order("created_at", { ascending: false })
+        .limit(20)
+
+      const interactionsData = interactionsResult.data || []
+      setInteractions(interactionsData)
+
+      // Fetch leads and contacts in parallel
+      const [leadsResult, contactsResult] = await Promise.all([
         supabase
           .from("leads")
           .select("*")
@@ -258,11 +263,9 @@ export default function DashboardPage() {
           .limit(12)
       ])
 
-      const interactionsData = interactionsResult.data || []
       const leadsData = leadsResult.data || []
       const contactsData = contactsResult.data || []
 
-      setInteractions(interactionsData)
       setLeads(leadsData)
       setContacts(contactsData)
       calculateMetrics(interactionsData, leadsData)
@@ -277,8 +280,6 @@ export default function DashboardPage() {
     } catch (error) {
       console.error("Error fetching dashboard data:", error)
       toast.error("Failed to load dashboard data")
-    } finally {
-      setIsLoading(false)
     }
   }, [])
 
@@ -597,7 +598,7 @@ export default function DashboardPage() {
   }
 
   // Show dashboard immediately, auth happens in background
-  if (isLoading && !user) {
+  if (!user) {
     return <DashboardSkeleton />
   }
 
