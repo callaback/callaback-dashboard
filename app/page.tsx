@@ -104,7 +104,7 @@ export default function DashboardPage() {
   const supabase = createClient()
   const [activeTab, setActiveTab] = useState("overview")
   const [isLoading, setIsLoading] = useState(true)
-  const [isAuthChecking, setIsAuthChecking] = useState(true)
+  const [isAuthChecking, setIsAuthChecking] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [interactions, setInteractions] = useState<Interaction[]>([])
   const [leads, setLeads] = useState<Lead[]>([])
@@ -172,10 +172,9 @@ export default function DashboardPage() {
     }
   }, [user, hasShownWelcome])
 
-  // Check for existing session on mount - OPTIMIZED VERSION
+  // Check for existing session on mount - NON-BLOCKING
   useEffect(() => {
     const checkUser = async () => {
-      setIsAuthChecking(true)
       try {
         const { data: { session } } = await supabase.auth.getSession()
         
@@ -189,8 +188,6 @@ export default function DashboardPage() {
         
       } catch (error) {
         router.push('/login')
-      } finally {
-        setIsAuthChecking(false)
       }
     }
     
@@ -599,19 +596,8 @@ export default function DashboardPage() {
     )
   }
 
-  // IMPROVED LOADING STATE
-  if (isAuthChecking) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50">
-        <div className="text-center space-y-4">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-cyan-600 border-t-transparent mx-auto" />
-          <p className="text-muted-foreground font-medium">Checking authentication...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (isLoading) {
+  // Show dashboard immediately, auth happens in background
+  if (isLoading && !user) {
     return <DashboardSkeleton />
   }
 
