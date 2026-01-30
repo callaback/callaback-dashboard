@@ -39,7 +39,9 @@ import { LocalMaps } from "@/components/local-maps"
 import { AIChat } from "@/components/ai-chat"
 import { TextToImage } from "@/components/text-to-image"
 import { useConfetti } from "@/hooks/useConfetti"
-import { LazyInteractionsPanel, LazyCallbackCalendar, LazyStorageDropzone } from "@/components/lazy-components"
+import { InteractionsPanel } from "@/components/interactions-panel"
+import { CallbackCalendar } from "@/components/callback-calendar"
+import { StorageDropzone } from "@/components/storage-dropezone"
 import { DashboardSkeleton } from "@/components/dashboard-skeleton"
 
 // YOUR PHONE NUMBER
@@ -1040,7 +1042,7 @@ export default function DashboardPage() {
           <div className="lg:col-span-4 flex flex-col gap-3">
             {/* Callback Calendar - Takes more space */}
             <div className="h-[550px]">
-              <LazyCallbackCalendar />
+              <CallbackCalendar />
             </div>
             
             {/* Notes/AI Tools Panel - Takes remaining space */}

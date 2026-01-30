@@ -4,9 +4,9 @@ import { lazy, Suspense } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
 
 // Lazy load heavy components
-const InteractionsPanel = lazy(() => import('@/components/interactions-panel'))
+const InteractionsPanel = lazy(() => import('@/components/interactions-panel').then(module => ({ default: module.InteractionsPanel })))
 const CallbackCalendar = lazy(() => import('@/components/callback-calendar').then(module => ({ default: module.CallbackCalendar })))
-const StorageDropzone = lazy(() => import('@/components/storage-dropezone'))
+const StorageDropzone = lazy(() => import('@/components/storage-dropezone').then(module => ({ default: module.StorageDropzone })))
 
 export function LazyInteractionsPanel(props: any) {
   return (
