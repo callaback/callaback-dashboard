@@ -52,6 +52,13 @@ export default function LoginPage() {
     }
 
     checkSession()
+
+    // Fallback timeout to prevent infinite loading
+    const timeout = setTimeout(() => {
+      setIsCheckingAuth(false)
+    }, 3000)
+
+    return () => clearTimeout(timeout)
   }, [router, supabase])
 
   const handleLogin = async (e: React.FormEvent) => {
