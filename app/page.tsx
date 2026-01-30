@@ -176,9 +176,13 @@ export default function DashboardPage() {
 
   // Check for existing session on mount - NON-BLOCKING
   useEffect(() => {
+    let mounted = true
+    
     const checkUser = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession()
+        
+        if (!mounted) return
         
         if (!session) {
           router.push('/login')
@@ -190,15 +194,36 @@ export default function DashboardPage() {
         
       } catch (error) {
         console.error('Auth check error:', error)
-        router.push('/login')
+        if (mounted) {
+          router.push('/login')
+        }
       }
     }
     
     checkUser()
 
+    // Force show dashboard after 2 seconds if auth check hangs
+    const timeout = setTimeout(() => {
+      if (mounted && !user) {
+        console.log('Auth check timeout, forcing dashboard load')
+        // Try to get session one more time, then show dashboard anyway
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          if (session?.user) {
+            setUser(session.user)
+          } else {
+            router.push('/login')
+          }
+        }).catch(() => {
+          router.push('/login')
+        })
+      }
+    }, 2000)
+
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        if (!mounted) return
+        
         console.log("Auth state changed:", event)
         
         if (event === 'SIGNED_OUT') {
@@ -216,6 +241,8 @@ export default function DashboardPage() {
     )
 
     return () => {
+      mounted = false
+      clearTimeout(timeout)
       subscription.unsubscribe()
     }
   }, []) // Only depend on router
