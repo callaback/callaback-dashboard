@@ -185,7 +185,7 @@ export default function DashboardPage() {
         if (!mounted) return
         
         if (!session) {
-          router.push('/login')
+          // router.push('/login')
           return
         }
         
@@ -195,7 +195,7 @@ export default function DashboardPage() {
       } catch (error) {
         console.error('Auth check error:', error)
         if (mounted) {
-          router.push('/login')
+          // router.push('/login')
         }
       }
     }
@@ -211,10 +211,10 @@ export default function DashboardPage() {
           if (session?.user) {
             setUser(session.user)
           } else {
-            router.push('/login')
+            // router.push('/login')
           }
         }).catch(() => {
-          router.push('/login')
+          // router.push('/login')
         })
       }
     }, 2000)
@@ -232,7 +232,7 @@ export default function DashboardPage() {
           setInteractions([])
           setLeads([])
           setContacts([])
-          router.push('/login')
+          // router.push('/login')
         } else if (event === 'SIGNED_IN' && session) {
           console.log("User signed in:", session.user.email)
           setUser(session.user)
