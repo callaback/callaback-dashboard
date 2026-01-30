@@ -190,11 +190,18 @@ export default function DashboardPage() {
         fetchDashboardData() // Load data in background
         
       } catch (error) {
+        console.error('Auth check error:', error)
+        setIsLoading(false) // Still show UI even if auth fails
         router.push('/login')
       }
     }
     
     checkUser()
+
+    // Fallback timeout to prevent infinite loading
+    const timeout = setTimeout(() => {
+      setIsLoading(false)
+    }, 3000)
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -211,11 +218,13 @@ export default function DashboardPage() {
         } else if (event === 'SIGNED_IN' && session) {
           console.log("User signed in:", session.user.email)
           setUser(session.user)
+          setIsLoading(false)
         }
       }
     )
 
     return () => {
+      clearTimeout(timeout)
       subscription.unsubscribe()
     }
   }, []) // Only depend on router
@@ -600,7 +609,7 @@ export default function DashboardPage() {
   }
 
   // Show dashboard immediately, auth happens in background
-  if (!user) {
+  if (isLoading) {
     return <DashboardSkeleton />
   }
 
