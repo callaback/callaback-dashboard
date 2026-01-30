@@ -1,0 +1,45 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
+
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_PUBLISHABLE_DEFAULT_KEY!
+)
+
+export async function GET() {
+  try {
+    const { data, error } = await supabase
+      .from('todos')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+
+    return NextResponse.json(data || [])
+  } catch (error) {
+    console.error('Error fetching todos:', error)
+    return NextResponse.json([], { status: 500 })
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const { text } = await request.json()
+
+    if (!text?.trim()) {
+      return NextResponse.json({ error: 'Text is required' }, { status: 400 })
+    }
+
+    const { data, error } = await supabase
+      .from('todos')
+      .insert([{ text: text.trim(), completed: false }])
+      .select()
+
+    if (error) throw error
+
+    return NextResponse.json(data[0])
+  } catch (error) {
+    console.error('Error creating todo:', error)
+    return NextResponse.json({ error: 'Failed to create todo' }, { status: 500 })
+  }
+}

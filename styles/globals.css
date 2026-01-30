@@ -3,6 +3,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Custom toast positioning for desktop */
+@media (min-width: 768px) {
+  [data-sonner-toaster] {
+    top: 1rem !important;
+    left: 1rem !important;
+  }
+}
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);

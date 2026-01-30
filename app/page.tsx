@@ -604,7 +604,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-      <Toaster position="top-center" richColors />
+      <Toaster position="top-left" richColors />
       
       {/* Header with Phone Number */}
       <header className="border-b border-slate-200 bg-white/80 backdrop-blur-xl sticky top-0 z-50 shadow-sm overflow-hidden">

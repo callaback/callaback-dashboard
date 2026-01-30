@@ -163,7 +163,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 p-4">
-      <Toaster position="top-center" richColors />
+      <Toaster position="top-left" richColors />
       <Card className="w-full max-w-md border-2 shadow-2xl">
         <CardHeader className="text-center space-y-4">
           <div className="mx-auto relative">

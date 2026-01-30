@@ -71,7 +71,7 @@ export function CallbackCalendar() {
 
   const loadTodos = async () => {
     try {
-      const response = await fetch("https://to-do-list-kv.callaback.workers.dev")
+      const response = await fetch("/api/todos")
       const data = await response.json()
       setTodos(data || [])
     } catch (error) {
@@ -82,16 +82,12 @@ export function CallbackCalendar() {
   const addTodo = async () => {
     if (!newTodo.trim()) return
     
-    console.log("Adding todo:", newTodo) // Debug log
-    
     try {
-      const response = await fetch("https://to-do-list-kv.callaback.workers.dev", {
+      const response = await fetch("/api/todos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: newTodo })
       })
-      
-      console.log("Response status:", response.status) // Debug log
       
       if (response.ok) {
         setNewTodo("")
@@ -100,7 +96,6 @@ export function CallbackCalendar() {
         setShowConfetti(true)
         setTimeout(() => setShowConfetti(false), 100)
       } else {
-        console.error("Response not ok:", response.statusText)
         toast.error("Failed to add todo")
       }
     } catch (error) {
@@ -111,7 +106,7 @@ export function CallbackCalendar() {
 
   const toggleTodo = async (id: string) => {
     try {
-      const response = await fetch(`https://to-do-list-kv.callaback.workers.dev/${id}`, {
+      const response = await fetch(`/api/todos/${id}`, {
         method: "PUT"
       })
       
@@ -125,7 +120,7 @@ export function CallbackCalendar() {
 
   const deleteTodo = async (id: string) => {
     try {
-      const response = await fetch(`https://to-do-list-kv.callaback.workers.dev/${id}`, {
+      const response = await fetch(`/api/todos/${id}`, {
         method: "DELETE"
       })
       
