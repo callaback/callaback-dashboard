@@ -555,7 +555,6 @@ export default function DashboardPage() {
   const handleLogout = async () => {
     try {
       console.log("Logout button clicked...")
-      alert("Logging out...") // Debug alert
       
       // Clear local state first
       setUser(null)
@@ -565,26 +564,15 @@ export default function DashboardPage() {
       setMetrics([])
       
       // Sign out from Supabase
-      const { error } = await supabase.auth.signOut()
-      if (error) {
-        console.error("Supabase signout error:", error)
-      }
+      await supabase.auth.signOut()
       
-      console.log("Logout successful")
-      toast.success("Logged out successfully")
-      
-      // Force redirect
-      setTimeout(() => {
-        window.location.href = '/login'
-      }, 500)
+      // Force redirect immediately
+      window.location.replace('/login')
       
     } catch (error) {
       console.error("Logout exception:", error)
-      alert("Logout error: " + error.message) // Debug alert
       // Force redirect anyway
-      setTimeout(() => {
-        window.location.href = '/login'
-      }, 500)
+      window.location.replace('/login')
     }
   }
 
